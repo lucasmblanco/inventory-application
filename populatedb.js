@@ -70,7 +70,6 @@ async function songCreate(title, artist, album, track_number, duration, genre) {
     album: album,
     track_number: track_number, 
     duration: duration,
-    genre: genre
   }; 
 
   if (genre != false) songDetail.genre = genre;
@@ -90,8 +89,6 @@ async function albumCreate(title, artist, cover, release_year, genre) {
     artist: artist,
     cover: cover64,
     release_year: release_year,
-    genre: genre,
-    songs: songs
   };
   if (genre != false) albumDetail.genre = genre;
 
@@ -121,7 +118,6 @@ async function createGenres() {
     genreCreate("Pop"),
     genreCreate("Hip Hop"),
     genreCreate("Metal"),
-    
   ]);
 }
 
