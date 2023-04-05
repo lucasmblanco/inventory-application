@@ -1,0 +1,10 @@
+<%- include('../index.ejs') %>
+<ul>
+    <% if(albums.length > 0 ) { %>
+      <% for(const album of albums) {%>
+          <li><a href="<%= album.url%>"><%= album.title%></a> by <a href="<%= album.artist.url%>"><%= album.artist.name%></a></li>
+      <% } %>
+    <% } else { %>
+      <p>There's no albums yet.</p>
+      <% } %>
+  </ul>

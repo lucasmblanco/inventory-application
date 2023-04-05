@@ -1,0 +1,12 @@
+<%- include("../index.ejs") %>
+
+<h2><%= title %></h2>
+<ul>
+  <% if(songs.length > 0 ) { %>
+    <% for(const song of songs) {%>
+        <li><a href="<%= song.url%>"><%= song.title%></a> by <a href="<%= song.artist.url %>"><%= song.artist.name%></a></li>
+    <% } %>
+  <% } else { %>
+    <p>There's no songs yet.</p>
+    <% } %>
+</ul>

@@ -1,0 +1,11 @@
+<%- include("../index.ejs") %>
+<h2><%= title %></h2>
+<ul>
+    <% if(genres.length > 0 ) { %>
+      <% for(const genre of genres) {%>
+          <li><a href="<%= genre.url%>"><%= genre.name%></a></li>
+      <% } %>
+    <% } else { %>
+      <p>There's no genres yet.</p>
+      <% } %>
+  </ul>

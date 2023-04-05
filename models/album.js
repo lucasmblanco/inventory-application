@@ -9,7 +9,7 @@ const AlbumSchema = new Schema({
     }, 
     artist: {
         type: Schema.Types.ObjectId,
-        ref: "Author", 
+        ref: "Artist", 
         required: true
     },
     cover: {
@@ -23,6 +23,10 @@ const AlbumSchema = new Schema({
         type: Schema.Types.ObjectId, 
         ref: "Genre",
     }],
+})
+
+AlbumSchema.virtual("url").get(function () {
+    return `/albums/detail/${this._id}`
 })
 
 module.exports = mongoose.models.Album || mongoose.model('Album', AlbumSchema); 

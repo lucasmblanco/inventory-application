@@ -8,8 +8,13 @@ require('dotenv').config()
 
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
+//var usersRouter = require('./routes/users');
+const inventoryRouter = require('./routes/inventory')
+const artistsRouter = require("./routes/artistsRoute"); 
+const albumsRouter = require("./routes/albumsRoute"); 
+const songsRouter = require("./routes/songsRoute"); 
+const genreRouter = require("./routes/genresRoute"); 
+const testRouter = require("./routes/testRoute"); 
 
 var app = express();
 
@@ -22,7 +27,6 @@ main().catch(err => console.log(err));
 async function main(){
   await mongoose.connect(db)
 }
-
 
 // -----------------------------
 
@@ -37,7 +41,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/inventory', inventoryRouter); 
+app.use('/artists', artistsRouter); 
+app.use('/albums', albumsRouter);
+app.use('/songs', songsRouter);
+app.use('/genres', genreRouter)
+app.use('/test', testRouter)
+//app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

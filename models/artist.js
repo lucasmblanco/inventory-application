@@ -23,4 +23,8 @@ const ArtistSchema = new Schema({
     }
 })
 
+ArtistSchema.virtual("url").get(function () {
+    return `/artists/detail/${this._id}`
+})
+
 module.exports = mongoose.models.Artist || mongoose.model('Artist', ArtistSchema)

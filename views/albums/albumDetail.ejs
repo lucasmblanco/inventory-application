@@ -1,0 +1,14 @@
+<%- include('../index.ejs') %>
+<div>
+    <img src="data:image/jpeg;base64,<%= cover%>" alt="">
+</div>
+<h2><%= title %></h2>
+<h3>by <%= artist.name%></h3>
+<p><%= release_year%></p>
+<% if(genres.length > 0) { %>
+    <% for(const genre of genres) { %>
+        <span><%= genre.name%></span>
+        <% } %>
+<% } else { %>
+    <span>Genre not found.</span>
+    <% } %>

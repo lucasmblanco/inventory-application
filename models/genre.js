@@ -8,4 +8,10 @@ const GenreSchema = new Schema({
     }
 }); 
 
+
+GenreSchema.virtual("url").get(function () {
+    return `/genres/detail/${this._id}`
+})
+
+
 module.exports = mongoose.models.Genre || mongoose.model("Genre", GenreSchema); 
