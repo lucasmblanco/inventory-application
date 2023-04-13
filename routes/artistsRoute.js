@@ -8,6 +8,6 @@ router.get('/detail/:id', artistController.getDetails);
 
 router.get('/create', artistController.getCreateArtist); 
 
-router.post('/create', artistController.postCreateArtistUploadPhoto, artistController.postCreateArtist); 
+router.post('/create', artistController.uploadPhotoArtist, artistController.postCreateArtist); 
 
 module.exports = router;

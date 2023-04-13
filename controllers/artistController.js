@@ -5,7 +5,7 @@ const multer = require('multer');
 const { body, validationResult } = require("express-validator"); 
 
 
-const storage = multer.diskStorage({ // notice you are calling the multer.diskStorage() method here, not multer()
+const storage = multer.diskStorage({ 
     destination: function(req, file, cb) {
         cb(null, 'uploads/')
     },
@@ -18,7 +18,8 @@ const fileFilter = function (req, file, cb) {
     if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
         cb(null, true); 
     } else {
-        cb(new Error('Invalid file type. Only PNG, JPG and JPEG files are allowed.'), false)
+        req.fileValidationError = 'Invalid file type. Only PNG, JPG and JPEG files are allowed.';
+        cb(null, false); 
     }
 }
 
@@ -68,9 +69,10 @@ const getCreateArtist = async (req, res, next) => {
     }
 }
 
-const postCreateArtistUploadPhoto = upload.single("photo");
+const uploadPhotoArtist = upload.single("photo");
 
 const postCreateArtist = [
+    
     body("name")
         .trim()
         .isLength({ min: 1 })
@@ -88,15 +90,23 @@ const postCreateArtist = [
         }
         return parseInt(value);
         })
-        .optional()
-        .isISO8601()
-        .toInt(),
+        .optional({checkFalsy: true})
+        .isISO8601(),
     body("biography")
         .trim()
         .isLength({ min: 1 })
         .escape(),
     async (req, res, next) => {
         const errors = validationResult(req);
+        if (req.fileValidationError) {
+               errors.errors.push( {
+                "value": "invalid_format",
+                "msg": "Invalid file type. Only PNG, JPG and JPEG files are allowed.",
+                "param": "photo",
+                "location": "file"
+                })
+        }
+        
         if (!errors.isEmpty()) {
             try {
                 res.render(path.join(__dirname, '..', 'views', 'artists', 'artistForm.ejs'), {
@@ -114,7 +124,7 @@ const postCreateArtist = [
                 const artist = new Artist({
                         name: req.body.name,
                         formation_year: req.body.formation_year,
-                        disbandment_year: req.body.disbandment_year ? 'present' : req.body.disbandment_year,
+                        disbandment_year: req.body.disbandment_year ?  req.body.disbandment_year : 'present',
                         biography: req.body.biography.replace(/&quot;/g, ''),
                         photo: imgBase64
                 })
@@ -124,9 +134,6 @@ const postCreateArtist = [
                         return next(err);
                 }
         }
-       
-            
-        
     }
 ];
 
@@ -134,6 +141,6 @@ module.exports = {
     getHome,
     getDetails,
     getCreateArtist,
-    postCreateArtistUploadPhoto,
+    uploadPhotoArtist,
     postCreateArtist
 };

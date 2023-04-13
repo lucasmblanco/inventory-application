@@ -28,6 +28,8 @@ const getDetails = async function (req, res, next) {
     }
 }
 
+
+
 module.exports = {
     getHome, 
     getDetails
