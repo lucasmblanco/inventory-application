@@ -12,7 +12,7 @@ const ArtistSchema = new Schema({
         required: true
     }, 
     disbandment_year: {
-        type: Number, 
+        type: Schema.Types.Mixed, 
     },
     biography: {
         type: String, 

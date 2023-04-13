@@ -1,6 +1,6 @@
 var axios = require('axios');
 
-axios.defaults.baseURL = 'https://api.spotify.com' // the prefix of the URL
+axios.defaults.baseURL = 'https://api.spotify.com' 
 axios.defaults.headers.get['Accept'] = 'application/json' 
 
 const test = (req, res, next) => {
@@ -57,7 +57,7 @@ const search = (req, res, next) => {
             console.log(error);
         });
 }
-
+ 
 
 module.exports = {
     test, 

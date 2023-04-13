@@ -14,15 +14,16 @@ const getHome = async function(req, res, next) {
     }
 }
 
-const getDetail = async function (req, res, next) {
+const getDetails = async function (req, res, next) {
     try {
         const songDetail = await Song.findById(req.params.id).populate(["artist", "album", "genre"]); 
         res.render(path.join(__dirname, '..', 'views', 'songs', 'songDetail.ejs'), {
             title: songDetail.title,
             artist: songDetail.artist,
             album: songDetail.album, 
+            track_number: songDetail.track_number, 
             duration: moment.duration(songDetail.duration).asMinutes(),
-            genre: songDetail.genre
+            genres: songDetail.genre
         })
     } catch (err) {
         next(err)
@@ -31,5 +32,5 @@ const getDetail = async function (req, res, next) {
 
 module.exports = {
     getHome,
-    getDetail
+    getDetails
 }

@@ -6,4 +6,8 @@ router.get('/', artistController.getHome);
 
 router.get('/detail/:id', artistController.getDetails); 
 
+router.get('/create', artistController.getCreateArtist); 
+
+router.post('/create', artistController.postCreateArtistUploadPhoto, artistController.postCreateArtist); 
+
 module.exports = router;

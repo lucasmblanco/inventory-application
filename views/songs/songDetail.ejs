@@ -1,0 +1,13 @@
+<%- include("../index.ejs")%>
+
+<h1><%= title %></h1>
+<h2>by <%= artist.name%></h2>
+<h3><%= album.title %> | Track Number: <%= track_number%> </h3>
+<p><%= duration%></p>
+<% if(genres.length > 0) { %>
+    <% for(const genre in genres) { %>
+        <p><%= genre.name%></p>
+    <% } %>
+<% } else { %>
+    <p>Not genres found.</p>
+<% } %>
