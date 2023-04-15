@@ -9,7 +9,8 @@ const SongSchema = new Schema({
     },
     artist: {
         type: Schema.Types.ObjectId,
-        ref: "Artist"
+        ref: "Artist",
+        required: true
     },
     album: {
         type: Schema.Types.ObjectId,
@@ -18,10 +19,6 @@ const SongSchema = new Schema({
     track_number: {
         type: Number,
     }, 
-    duration: {
-        type: Number,
-        required: true
-    },
     genre: [{
         type: Schema.Types.ObjectId,
         ref: "Genre"

@@ -72,14 +72,11 @@ const getCreateArtist = async (req, res, next) => {
 const uploadPhotoArtist = upload.single("photo");
 
 const postCreateArtist = [
-    
     body("name")
         .trim()
         .isLength({ min: 1 })
         .escape()
-        .withMessage("Name must be specific.")
-        .isAlphanumeric()
-        .withMessage("Name has non-alphanumeric characters."),
+        .withMessage("Name must be specific."),
     body("formation_year")
         .isISO8601()
         .toInt(),
@@ -106,7 +103,6 @@ const postCreateArtist = [
                 "location": "file"
                 })
         }
-        
         if (!errors.isEmpty()) {
             try {
                 res.render(path.join(__dirname, '..', 'views', 'artists', 'artistForm.ejs'), {
@@ -119,17 +115,24 @@ const postCreateArtist = [
             }
         } else {
             try {
-                const imgData = await fs.readFile(req.file.path)
-                const imgBase64 = Buffer.from(imgData).toString('base64');
-                const artist = new Artist({
-                        name: req.body.name,
-                        formation_year: req.body.formation_year,
-                        disbandment_year: req.body.disbandment_year ?  req.body.disbandment_year : 'present',
-                        biography: req.body.biography.replace(/&quot;/g, ''),
-                        photo: imgBase64
-                })
-                    await artist.save(); 
-                    res.redirect(artist.url); 
+
+                const checkArtistExistence = await Artist.findOne({ name: req.body.name }).exec(); 
+                if (checkArtistExistence) {
+                    res.redirect(checkArtistExistence.url); 
+                } else {
+                    const imgData = await fs.readFile(req.file.path)
+                    const imgBase64 = Buffer.from(imgData).toString('base64');
+                    const artist = new Artist({
+                            name: req.body.name,
+                            formation_year: req.body.formation_year,
+                            disbandment_year: req.body.disbandment_year ?  req.body.disbandment_year : 'present',
+                            biography: req.body.biography.replace(/&quot;/g, ''),
+                            photo: imgBase64
+                    })
+                        await artist.save(); 
+                        res.redirect(artist.url); 
+                }
+
                 } catch (err) {
                         return next(err);
                 }

@@ -4,6 +4,10 @@ const genreController = require("../controllers/genreController");
 
 router.get('/', genreController.getHome); 
 
-router.get('/detail/:id', genreController.getDetails)
+router.get('/detail/:id', genreController.getDetails); 
+
+router.get('/create', genreController.getcreateGenre); 
+
+router.post('/create', genreController.postcreateGenre); 
 
 module.exports = router; 

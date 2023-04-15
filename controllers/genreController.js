@@ -30,7 +30,21 @@ const getDetails = async (req, res, next) => {
     }
 }
 
+
+const getcreateGenre = (req, res, next) => {
+    res.render(path.join(__dirname, '..', 'views', 'genres', 'genreForm.ejs'), {
+        title: 'Create genre', 
+        genre: false,
+        errors: false
+    })
+}
+
+const postcreateGenre = []
+
+
 module.exports = {
     getHome, 
-    getDetails
+    getDetails,
+    getcreateGenre,
+    postcreateGenre
 }

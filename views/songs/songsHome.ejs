@@ -1,6 +1,7 @@
 <%- include("../index.ejs") %>
 
 <h2><%= title %></h2>
+<div><a href="/songs/create">Add</a></div>
 <ul>
   <% if(songs.length > 0 ) { %>
     <% for(const song of songs) {%>

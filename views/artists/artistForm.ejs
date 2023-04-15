@@ -2,11 +2,11 @@
 
 <h2><% title %></h2>
 <form action="" method="POST" enctype="multipart/form-data">
-    <div>
+    <div class="field-container">
         <label for="name">Name:</label>
-        <input type="text" id="name" class="name" value="<%= artist ? artist.name : '' %>" placeholder="Linkin Park" required="true" name="name">
+        <input type="text" id="name" class="name" value="<%= artist ? artist.name : '' %>" required="true" name="name">
     </div>
-    <div>
+    <div class="field-container">
         <label for="formation_year">Formation year:</label>
         <input type="Number" id="formation_year" class="formation_year" value="<%= artist ? artist.formation_year : '' %>"  required="true" name="formation_year" min="1000" max="<%= new Date().getFullYear() %>">
     </div>
@@ -14,15 +14,14 @@
         <label for="disbandment_year">Disbandment Year:</label>
         <input type="Number" id="disbandment_year" class="disbandment_year" value="<%= artist ? artist.disbandment_year : '' %>"  min="0" name="disbandment_year">
     </div>
-    <div>
+    <div class="field-container">
         <label for="biography">Biography:</label>
         <input type="textarea" id="biography" class="biography" value="<%= artist ? artist.biography : '' %>" required="true" name="biography">
     </div>
-    <div>
+    <div class="field-container">
         <label for="photo">Photo: </label>
         <input type="file" accept=".png, .jpg, .jpeg" name="photo">
     </div>
-
     <button type="submit">Submit</button>
 </form>
 <div>
