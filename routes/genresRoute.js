@@ -10,4 +10,10 @@ router.get('/create', genreController.getcreateGenre);
 
 router.post('/create', genreController.postcreateGenre); 
 
+router.get('/detail/:id/edit', genreController.getEditGenre); 
+
+router.post('/detail/:id/edit', genreController.postEditGenre); 
+
+router.delete('/detail/:id/', genreController.deleteGenre);
+
 module.exports = router; 

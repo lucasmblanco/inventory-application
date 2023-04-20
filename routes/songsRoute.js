@@ -10,4 +10,10 @@ router.get('/create', songController.getSongCreate);
 
 router.post('/create', songController.postSongCreate); 
 
+router.get("/detail/:id/edit", songController.getEditSong); 
+
+router.put("/detail/:id/edit", songController.postEditSong); 
+
+router.delete('/detail/:id', songController.deleteSong); 
+
 module.exports = router; 

@@ -1,6 +1,6 @@
 <%- include('../index.ejs') %>
 
-<form action="" method="POST">
+<form action="<%= edit ? `${song.url}/edit?_method=PUT` : `` %>" method="POST">
     <div class="field-container">
         <label for="title">Title: </label>
         <input type="text" name="title" id="title" value="<%= song ? song.title : '' %> " required="true">
@@ -9,10 +9,9 @@
         <label for="artist">Artist: </label>
         <select name="artist" id="artist" required="true">
             <option value="" selected disabled hidden>Choose an artist</option>
-     
             <% if(artists.length > 0) {%>
              <%   for(const artist of artists) {%>
-                    <option value="<%= artist._id%>" <%= song ? song.artist._id === artist._id && 'selected' : '' %>> <%= artist.name%></option>
+                    <option id="option-artist" value="<%= artist._id%>" <%= song ? song.artist._id.toString() === artist._id.toString() && 'selected' : "" %>> <%= artist.name%></option>
                     <% }%>
                 <% }%>
         </select>
@@ -20,17 +19,18 @@
     <div class="field-container">
         <label for="album">Album: </label>
         <select name="album" id="album" required="true">
-            <option value="" selected disabled hidden>Choose an album</option>
+            <option value="" selected disabled hidden id="hidden-option-album">Choose an artist to show available albums</option>
             <% if(albums.length > 0 ) { %>
                <% for(const album of albums) { %>
-                    <option value="<%= album._id%>" <%= song ? song.album._id === album._id && 'selected' : '' %>> <%= album.title%></option>
+                    <option id="option-album" value="<%= album._id%>"  <%= song ? song.album._id.toString() === album._id.toString() && 'selected' : "" %> data-artist="<%= album.artist._id%>" hidden > <%= album.title%></option>
                     <%  } %>
                     <% } %>
         </select>
     </div>
     <div class="field-container">
         <label for="track_number">Track number: </label>
-        <input type="number" id="track_number" name="track_number" value="<%= song ? song.track_number : '' %>" min="1">
+        <% console.log(song.track_number)%>
+        <input type="number" id="track_number" name="track_number" value=<%= song ? song.track_number.toString() : '' %> min="1">
     </div>
 
     <div class="field-container">
@@ -39,7 +39,7 @@
             <option value="" selected disabled hidden>Choose a genre</option>
             <% if(genres.length > 0 ) { %>
                <% for(const genre of genres) { %>
-                    <option value="<%= genre._id%>" <%= song ? song.genre._id === genre._id && 'selected' : '' %>> <%= genre.name%></option>
+                   <option value="<%= genre._id%>" <%= song ? song.genre[0]._id.toString() === genre._id.toString() && 'selected' : "" %>><%= genre.name%></option>
                     <%  } %>
                     <% } %>
         </select>
@@ -55,3 +55,27 @@
         </ul>
     <% } %>
 </div>
+<script>
+    
+    const artists = document.querySelectorAll('option#option-artist'); 
+    const albums = document.querySelectorAll('option#option-album'); 
+    const selectedAlbum = document.querySelector('select#album'); 
+    const hiddenAlbumOption = document.querySelector('option#hidden-option-album'); 
+
+    artists.forEach(a => a.addEventListener('click', (e) => {
+        albums.forEach((album) => {
+            selectedAlbum.selectedIndex === -1 || (selectedAlbum.selectedIndex = -1)
+            hiddenAlbumOption.selected = true;
+            hiddenAlbumOption.text !== 'Choose an album' && (hiddenAlbumOption.text = 'Choose an album')  
+            if(album.dataset.artist.toString() !== e.target.value.toString()) {
+                album.hidden = true;
+            } else {
+                album.hidden = false; 
+            }
+        }
+        ); 
+     
+    }))
+
+
+</script>

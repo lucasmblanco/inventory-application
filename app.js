@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require("mongoose"); 
+const methodOverride = require('method-override')
 require('dotenv').config()
 
 
@@ -40,13 +41,16 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use(methodOverride('_method')); 
+
+
 app.use('/', indexRouter);
 app.use('/inventory', inventoryRouter); 
 app.use('/artists', artistsRouter); 
 app.use('/albums', albumsRouter);
 app.use('/songs', songsRouter);
 app.use('/genres', genreRouter)
-app.use('/test', testRouter)
+//app.use('/test', testRouter)
 //app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

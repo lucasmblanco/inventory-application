@@ -10,4 +10,10 @@ router.get('/create', albumController.uploadCoverAlbum, albumController.getCreat
 
 router.post('/create', albumController.uploadCoverAlbum, albumController.postCreateAlbum); 
 
+router.get('/detail/:id/edit', albumController.getEditAlbum);
+
+router.put('/detail/:id/edit', albumController.uploadCoverAlbum, albumController.postEditAlbum); 
+
+router.delete('/detail/:id', albumController.deleteAlbum); 
+
 module.exports = router;

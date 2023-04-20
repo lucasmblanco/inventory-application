@@ -26,7 +26,8 @@ const getDetails = async function (req, res, next) {
             artist: songDetail.artist,
             album: songDetail.album, 
             track_number: songDetail.track_number, 
-            genres: songDetail.genre
+            genres: songDetail.genre,
+            url: songDetail.url
         })
     } catch (err) {
         next(err)
@@ -37,7 +38,7 @@ const getSongCreate = async function (req, res, next) {
     try {
         const [artists, albums, genres] = await Promise.all([
             Artist.find({}, "name").exec(),
-            Album.find({}, "title").exec(),
+            Album.find().populate("artist").exec(),
             Genre.find().exec()
         ]); 
 
@@ -45,7 +46,10 @@ const getSongCreate = async function (req, res, next) {
             title: 'Create Song', 
             song: false,
             errors: false,
-            artists, albums, genres
+            artists: artists, 
+            albums: albums,
+            genres: genres,
+            edit: false
         })
     } catch (err) {
         return next(err); 
@@ -69,23 +73,27 @@ const postSongCreate = [
         .escape()
         .withMessage('Album must be specific'), 
     body("track_number", "Track number must not be empty")
-        .isISO8601()
+        .not()
+        .isEmpty()
+        .withMessage("Track number must not be empty")
         .toInt(),
     async (req, res, next) => {
         const errors = validationResult(req); 
-        if (!errors.isEmpty) {
+        if (!errors.isEmpty()) {
             try {
                 const [artists, albums, genres] = await Promise.all([
                     Artist.find({}, "name").exec(),
-                    Album.find({}, "title").exec(),
+                    Album.find().populate("artist").exec(),
                     Genre.find().exec()
                 ]); 
-        
                 res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
                     title: 'Create Song', 
                     song: req.body,
                     errors: errors.array(),
-                    artists, albums, genres
+                    artists: artists, 
+                    albums: albums,
+                    genres: genres,
+                    edit: false
                 })
             } catch (err) {
                 return next(err); 
@@ -93,7 +101,7 @@ const postSongCreate = [
         } else {
             try {
                 const song = new Song({
-                    title: req.body.title,
+                    title: req.body.title.replace(/&#x27;/g, "'"),
                     artist: req.body.artist,
                     album: req.body.album,
                     track_number: req.body.track_number,
@@ -111,10 +119,99 @@ const postSongCreate = [
 
 ]
 
+const getEditSong = async(req, res, next) => {
+    try {
+        const [song, artists, albums, genres] = await Promise.all([
+            Song.findById(req.params.id).populate(["artist", "album", "genre"]).exec(),
+            Artist.find({}, "name").exec(),
+            Album.find().populate("artist").exec(),
+            Genre.find().exec()
+        ]); 
+
+        res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
+            title: 'Edit song information', 
+            errors: false,
+            song, artists, albums, genres,
+            edit: true
+        })
+    } catch (err) {
+        return next(err); 
+    }
+}
+
+const postEditSong = [
+    body('title', 'Title must not be empty')
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage('Title must be specific'), 
+    body("artist", "Artist must not be empty")
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage('Artist must be specific'), 
+    body("album", "Album must not be empty")
+        .trim()
+        .isLength({ min: 1 })
+        .escape()
+        .withMessage('Album must be specific'), 
+    body("track_number", "Track number must not be empty")
+        .toInt(),
+    async (req, res, next) => {
+        const errors = validationResult(req); 
+        if (!errors.isEmpty()) {
+            try {
+                const [artists, albums, genres] = await Promise.all([
+                    Artist.find({}, "name").exec(),
+                    Album.find().populate("artist").exec(),
+                    Genre.find().exec()
+                ]); 
+                return res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
+                    title: 'Edit song information', 
+                    song: req.body,
+                    errors: errors.array(),
+                    artists, albums, genres, 
+                    edit: true
+                })
+            } catch (err) {
+                return next(err); 
+            }
+        } else {
+            try {
+                const song = new Song({
+                    title: req.body.title.replace(/&#x27;/g, "'"),
+                    artist: req.body.artist,
+                    album: req.body.album,
+                    track_number: req.body.track_number,
+                    genre: req.body.genre,
+                    _id: req.params.id
+                }); 
+                
+                const songUpdated = await Song.findByIdAndUpdate(req.params.id, song, { new: true });
+                return res.redirect(songUpdated.url); 
+            } catch (err) {
+                return next(err); 
+           }
+             
+        }
+    }
+]; 
+
+const deleteSong = async(req, res, next) => {
+    try {
+        await Song.findByIdAndDelete(req.params.id); 
+        res.redirect('/songs'); 
+    } catch (err) {
+        return next(err); 
+    }
+}
 
 module.exports = {
     getHome,
     getDetails,
     getSongCreate,
-    postSongCreate
+    postSongCreate, 
+    getEditSong, 
+    postEditSong,
+    deleteSong
 }

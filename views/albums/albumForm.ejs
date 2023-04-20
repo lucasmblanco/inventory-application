@@ -1,7 +1,7 @@
 <%- include("../index.ejs")%>
 
 <h2><%= title %></h2>
-<form action="" method="POST" enctype="multipart/form-data">
+<form action="<%= edit ? `${album.url}/edit?_method=PUT` : `` %>" method="POST" enctype="multipart/form-data">
     <div class="field-container">
         <label for="title">Title: </label>
         <input type="text" name="title" id="title" value="<%= album ? album.title : '' %>" required="true">
@@ -12,26 +12,28 @@
             <option value="" selected disabled hidden>Choose an artist</option>
             <% if(artists.length > 0) {%>
                 <% for(const artist of artists) {%>
-                    <option value="<%= artist._id %>" <%= album ? album.artist._id === artist._id && 'selected' : ''  %> class="option-artist" data-fy="<%= artist.formation_year %>"><%= artist.name%> </option>
+                    <option value="<%= artist._id %>" <%= album ? album.artist._id.toString() === artist._id.toString() && 'selected' : ''  %> class="option-artist" data-fy="<%= artist.formation_year %>"><%= artist.name%> </option>
                 <% } %>
             <% } %>
         </select>
     </div>
     <div class="field-container">
         <label for="cover">Album cover: </label>
-        <input type="file" accept=".png, .jpg, .jpeg" name="cover" value="<% album ? album.cover : '' %>">
+        <input type="file" accept=".png, .jpg, .jpeg" name="cover" value="<%= album ? album.cover : '' %>">
     </div>
     <div class="field-container">
         <label for="release_year">Release year: </label>
-        <input type="number" name="release_year" id="release_year" value="<% album ? album.release_year : '' %>" required="true">
+        <input type="number" name="release_year" id="release_year" value="<%= album ? album.release_year : '' %>" required="true">
     </div>
     <div class="field-container">
         <label for="genre">Genre: </label>
         <select name="genre" id="genre">
+            <option value="" selected disabled hidden>Choose a genre</option>
             <% if(genres.length > 0) { %>
                 <%  for(const genre of genres ) { %>
-                <option value="<%= genre._id %>" <%= album ? album.genre._id === genre._id && 'selected' : '' %>><%= genre.name%></option>
-                <%  } %>
+               
+                <option value="<%= genre._id %>" <%= album ? album.genre[0]._id.toString() === genre._id.toString() && 'selected' : '' %>><%= genre.name%></option>
+                <% } %>
            <%  } %>
         </select>
     </div>
@@ -52,7 +54,6 @@
 
     artists.forEach(a => {
         a.addEventListener('click', e => {
-                console.log(e.target.dataset.fy); 
                 albumReleaseYearInput.min = e.target.dataset.fy 
         })
     })

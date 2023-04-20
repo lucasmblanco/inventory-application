@@ -10,3 +10,16 @@
 <div>
     <p><%= biography%></p>
 </div>
+<div>
+    <a href=<%=`${url}/edit`%>>Edit</a>
+</div>
+<div>
+    <form action=<%=`${url}/?_method=DELETE`%> method="POST">
+        <button type="submit">Delete</button>
+    </form>
+</div>
+<% if(error) { %>
+    <div>
+        <p><%= error%></p>
+    </div>
+<% } %>
