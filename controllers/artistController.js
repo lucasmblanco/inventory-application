@@ -36,7 +36,7 @@ const upload = multer({
 
 const getHome = async (req, res, next) => {
   try {
-    const artistsResult = await Artist.find({}, "name").exec();
+    const artistsResult = await Artist.find({}, "name").collation({locale: "en" }).sort({name: 1}).exec();
     res.render(
       path.join(__dirname, "..", "views", "artists", "artistsHome.ejs"),
       {
@@ -51,7 +51,11 @@ const getHome = async (req, res, next) => {
 
 const getDetails = async (req, res, next) => {
   try {
-    const artistDetail = await Artist.findById(req.params.id).exec();
+    const [artistDetail, artistSongs, artistAlbum] = await Promise.all([
+      Artist.findById(req.params.id).exec(),
+      Song.find({ artist: req.params.id }).sort({title: 1}).exec(), 
+      Album.find({artist: req.params.id}).sort({title: 1}).exec()
+    ]);
     res.render(
       path.join(__dirname, "..", "views", "artists", "artistDetail.ejs"),
       {
@@ -61,6 +65,8 @@ const getDetails = async (req, res, next) => {
         biography: artistDetail.biography,
         photo: artistDetail.photo,
         url: artistDetail.url,
+        songs: artistSongs, 
+        albums: artistAlbum,
         error: false,
       }
     );
@@ -151,7 +157,7 @@ const postCreateArtist = [
             disbandment_year: req.body.disbandment_year
               ? req.body.disbandment_year
               : "present",
-            biography: req.body.biography.replace(/&quot;/g, bringBackQuotes),
+            biography: req.body.biography.replace(/&#x27;|&quot;/g, bringBackQuotes),
             photo: imgBase64,
           });
           await artist.save();
@@ -167,7 +173,7 @@ const postCreateArtist = [
 function bringBackQuotes(value) {
   if (value === "&quot;") {
     return '"';
-  } else if (value === "&#x27;") {
+  } else if (value === "&#x27;")  {
     return "'";
   }
 }
@@ -279,7 +285,7 @@ const postEditArtist = [
           disbandment_year: req.body.disbandment_year
             ? req.body.disbandment_year
             : "present",
-          biography: req.body.biography.replace(/&quot;/g, bringBackQuotes),
+          biography: req.body.biography.replace(/&#x27;|&quot;/g, bringBackQuotes),
           photo: imgBase64,
           _id: req.params.id,
         });
@@ -305,7 +311,11 @@ const deleteArtist = async (req, res, next) => {
 
     if (albums.length || songs.length) {
       try {
-        const artistDetail = await Artist.findById(req.params.id).exec();
+        const [artistDetail, artistSongs, artistAlbums] = await Promise.all([
+          Artist.findById(req.params.id).exec(), 
+          Song.find({ artist: req.params.id }).sort({title: 1}).exec(), 
+          Album.find({artist: req.params.id}).sort({title: 1})
+        ])
         return res.render(
           path.join(__dirname, "..", "views", "artists", "artistDetail.ejs"),
           {
@@ -315,8 +325,10 @@ const deleteArtist = async (req, res, next) => {
             biography: artistDetail.biography,
             photo: artistDetail.photo,
             url: artistDetail.url,
+            songs: artistSongs, 
+            albums: artistAlbums,
             error:
-              "You cannot delete this artist, try deleting the albums and songs first",
+              "You cannot delete this artist",
           }
         );
       } catch (err) {

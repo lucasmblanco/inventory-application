@@ -8,7 +8,7 @@ const { body, validationResult } = require("express-validator");
 
 const getHome = async function(req, res, next) {
     try {
-        const songsResult = await Song.find({}, "title artist").populate("artist").exec(); 
+        const songsResult = await Song.find({}, "title artist").populate("artist").collation({locale: "en" }).sort({title: 1}).exec(); 
         res.render(path.join(__dirname, '..', 'views', 'songs', 'songsHome.ejs'), {
             title: 'Songs',
             songs: songsResult

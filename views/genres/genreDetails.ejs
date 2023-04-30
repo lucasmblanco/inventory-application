@@ -1,25 +1,61 @@
 <%- include('../index.ejs')%> 
 
 <h2><%= title%></h2>
-<ul>
-   <%  if(songs.length > 0) { %>
-       <%  for(const song of songs) { %>
-            <li><a href="<%= song.url%>"><%= song.title%></a> by <a href="<%= song.artist.url%>"><%= song.artist.name%></a></li>
-      <%  } %>
-    <% } else { %>
-        <p>No song found with this genre</p>
-    <% } %>
-</ul>
-<div>
-    <a href=<%=`${url}/edit`%>>Edit</a>
+<section class="category-section songs-section">
+    <ul>
+        <%  if(songs.length > 0) { %>
+            <%  for(const song of songs) { %>
+                 <li><a href="<%= song.url%>"><%= song.title%></a> by <a href="<%= song.artist.url%>"><%= song.artist.name%></a></li>
+           <%  } %>
+         <% } else { %>
+             <p>No song found with this genre</p>
+         <% } %>
+     </ul>
+</section>
+<div class="panel">
+    <div>
+        <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
+    </div>
+    <div>
+            <button type="button" id="delete-button" class="delete-button">Delete</button>
+    </div>
 </div>
-<div>
+<div class="popup-container" hidden>
     <form action=<%=`${url}/?_method=DELETE`%> method="POST">
-        <button type="submit">Delete</button>
+        <label for="delete">Are you sure you want to delete this genre?</label>
+        <div class="form-control">
+            <button type="submit" name="delete" id="delete-action">Confirm</button>
+        <button type="button" id="cancel-button">Cancel</button>
+        </div>
     </form>
 </div>
 <% if(error) { %>
-    <div>
-        <p><%= error %></p>
+    <div class="error-message-container">
+      <%- include('../../public/images/x.svg') %>
+      <p class="error-message"><%= error%></p>
     </div>
-<% } %>
+    <% } %>
+<script>
+    const popupContainer = document.querySelector('div.popup-container'); 
+    const deleteButton = document.querySelector('button#delete-button'); 
+    const cancelButton = document.querySelector('button#cancel-button'); 
+
+    deleteButton.addEventListener('click', showPopup); 
+    cancelButton.addEventListener('click', disablePopup); 
+
+    function disablePopup(){
+        popupContainer.hidden = true; 
+    }
+    function showPopup(){
+        popupContainer.hidden = false; 
+    }
+
+    const errorContainer = document.querySelector('div.error-message-container'); 
+    if(errorContainer){
+        setTimeout(() => {
+            errorContainer.style.display = 'none'
+        }, 3000)
+    }
+
+
+</script>

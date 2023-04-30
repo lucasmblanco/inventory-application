@@ -1,6 +1,7 @@
 const Album = require("../models/album");
 const Artist = require("../models/artist");
 const Genre = require("../models/genre");
+const Song = require("../models/song"); 
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs/promises");
@@ -40,6 +41,8 @@ const getHome = async function (req, res, next) {
   try {
     const albumsResults = await Album.find({}, "title artist")
       .populate("artist")
+      .collation({locale: "en" })
+      .sort({title: 1})
       .exec();
     res.render(path.join(__dirname, "..", "views", "albums", "albumsHome"), {
       title: "Albums",
@@ -52,17 +55,23 @@ const getHome = async function (req, res, next) {
 
 const getDetails = async function (req, res, next) {
   try {
-    const albumDetail = await Album.findById(req.params.id)
-      .populate("artist")
-      .populate("genre")
-      .exec();
-    res.render(path.join(__dirname, "..", "views", "albums", "albumDetail"), {
+    const [albumDetail, songs] = await Promise.all([
+      Album.findById(req.params.id)
+        .populate("artist")
+        .populate("genre")
+        .exec(),
+      Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec()
+    ])
+
+    res.render(path.join(__dirname, "..", "views", "albums", "albumDetail.ejs"), {
       title: albumDetail.title,
       artist: albumDetail.artist,
       cover: albumDetail.cover,
       release_year: albumDetail.release_year,
       genres: albumDetail.genre,
       url: albumDetail.url,
+      error: false,
+      songs
     });
   } catch (err) {
     return next(err);
@@ -77,7 +86,7 @@ const getCreateAlbum = async function (req, res, next) {
     ]);
 
     res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
-      title: "Create an album",
+      title: "Create album",
       album: false,
       errors: false,
       artists,
@@ -126,7 +135,7 @@ const postCreateAlbum = [
         ]);
 
         res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
-          title: "Create an album",
+          title: "Create album",
           album: req.body,
           errors: errors.array(),
           artists,
@@ -309,12 +318,41 @@ const postEditAlbum = [
   },
 ];
 
-const deleteAlbum = async(req, res, next) => {
+const deleteAlbum = async (req, res, next) => {
+  
   try {
-    await Album.findByIdAndDelete(req.params.id); 
-    res.redirect('/albums'); 
+    const [albumDetail, songs] = await Promise.all([
+      Album.findById(req.params.id)
+        .populate("artist")
+        .populate("genre")
+        .exec(),
+      Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec()
+    ])
+    if (songs.length) { 
+      try {
+        res.render(path.join(__dirname, "..", "views", "albums", "albumDetail.ejs"), {
+          title: albumDetail.title,
+          artist: albumDetail.artist,
+          cover: albumDetail.cover,
+          release_year: albumDetail.release_year,
+          genres: albumDetail.genre,
+          url: albumDetail.url,
+          error: "You cannot delete this album because is in use",
+          songs
+        });
+      } catch (err) {
+        return next(err); 
+      }
+    } else {
+      try {
+        await Album.findByIdAndDelete(req.params.id); 
+        res.redirect('/albums'); 
+      } catch (err) {
+        return next(err); 
+      }
+    }
   } catch (err) {
-    return next(err); 
+    return next(err);
   }
 }
 

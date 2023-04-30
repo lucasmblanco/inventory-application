@@ -1,7 +1,7 @@
 <%- include('../index.ejs')%> 
 
-<h2><% title %></h2>
-<form action="<%= edit ? `${artist.url}/edit?_method=PUT` : `` %>" method="POST" enctype="multipart/form-data">
+<h2><%= title %></h2>
+<form action="<%= edit ? `${artist.url}/edit?_method=PUT` : `` %>" method="POST" enctype="multipart/form-data" class="main-form">
     <div class="field-container">
         <label for="name">Name:</label>
         <input type="text" id="name" class="name" value="<%= artist ? artist.name : '' %>" required="true" name="name">
@@ -10,13 +10,13 @@
         <label for="formation_year">Formation year:</label>
         <input type="Number" id="formation_year" class="formation_year" value="<%= artist ? artist.formation_year : '' %>"  required="true" name="formation_year" min="1000" max="<%= new Date().getFullYear() %>">
     </div>
-    <div>
+    <div class="field-container">
         <label for="disbandment_year">Disbandment Year:</label>
         <input type="Number" id="disbandment_year" class="disbandment_year" value="<%= artist ? artist.disbandment_year : '' %>"  min="0" name="disbandment_year">
     </div>
     <div class="field-container">
         <label for="biography">Biography:</label>
-        <input type="textarea" id="biography" class="biography" value="<%= artist ? artist.biography : '' %>" required="true" name="biography">
+        <textarea name="biography" id="biography" cols="30" rows="5"  value="<%= artist ? artist.biography : '' %>" required="true"></textarea>
     </div>
     <div class="field-container">
         <label for="photo">Photo: </label>

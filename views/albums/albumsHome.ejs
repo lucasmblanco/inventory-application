@@ -1,5 +1,7 @@
 <%- include('../index.ejs') %>
-<div><a href="/albums/create">Add</a></div>
+<h2><%= title %></h2>
+<section class="category-section albums-section">
+  <div class="add-button-container"><a href="/albums/create" class="add-button">Add</a></div>
 <ul>
     <% if(albums.length > 0 ) { %>
       <% for(const album of albums) {%>
@@ -9,3 +11,4 @@
       <p>There's no albums yet.</p>
       <% } %>
   </ul>
+</section>

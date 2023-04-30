@@ -1,6 +1,7 @@
 <%- include("../index.ejs") %>
 <h2><%= title %></h2>
-<div><a href="/genres/create">Add</a></div>
+<section class="category-section">
+  <div class="add-button-container"><a href="/genres/create">Add</a></div>
 <ul>
     <% if(genres.length > 0 ) { %>
       <% for(const genre of genres) {%>
@@ -10,3 +11,4 @@
       <p>There's no genres yet.</p>
       <% } %>
 </ul>
+</section>

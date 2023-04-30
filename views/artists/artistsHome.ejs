@@ -1,7 +1,8 @@
 <%- include("../index.ejs") %>
 
 <h2><%= title %></h2>
-<div><a href="/artists/create">Add</a></div>
+<section class="category-section">
+  <div class="add-button-container"><a href="/artists/create" class="add-button">Add</a></div>
 <ul>
   <% if(artists.length > 0 ) { %>
     <% for(const artist of artists) {%>
@@ -11,3 +12,4 @@
     <p>There's no artists yet.</p>
     <% } %>
 </ul>
+</section>

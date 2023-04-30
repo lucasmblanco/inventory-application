@@ -5,7 +5,7 @@ const { body, validationResult } = require("express-validator");
 
 const getHome = async (req, res, next) => {
   try {
-    const genresResult = await Genre.find({}).exec();
+    const genresResult = await Genre.find({}).collation({locale: "en" }).sort({name: 1}).exec();
     res.render(
       path.join(__dirname, "..", "views", "genres", "genresHome.ejs"),
       {

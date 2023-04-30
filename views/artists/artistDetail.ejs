@@ -1,25 +1,67 @@
 <%- include('../index.ejs') %>
 
 <h2><%= title%></h2>
-<div>
-    <img src="data:image/jpeg;base64,<%= photo %>" alt="">
+<div class="img-container">
+  <img src="data:image/jpeg;base64,<%= photo %>" alt="">
 </div>
-<div>
-    <span><%= formation_year%> - <%= disbandment_year%></span>
+<div class="year-information">
+  <span><%= formation_year%> - <%= disbandment_year%></span>
 </div>
-<div>
-    <p><%= biography%></p>
+<div class="biography-information">
+  <p><%= biography%></p>
 </div>
-<div>
-    <a href=<%=`${url}/edit`%>>Edit</a>
-</div>
-<div>
+<div class="panel">
+  <div>
+    <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
+  </div>
+  <div>
     <form action=<%=`${url}/?_method=DELETE`%> method="POST">
-        <button type="submit">Delete</button>
+      <button class="delete-button" type="submit">Delete</button>
     </form>
+  </div>
 </div>
-<% if(error) { %>
-    <div>
-        <p><%= error%></p>
-    </div>
+<h3>albums from this artist:</h3>
+<% if(albums.length){ %>
+<div class="artist-albums">
+  <% for(const [index, album] of albums.entries()){  %>
+  <div>
+    <a href="<%= album.url%>">
+      <img src="data:image/jpeg;base64,<%= album.cover %>" alt="">
+      <span><%= album.title%></span>
+    </a>
+
+
+  </div>
+
+  <% } %>
+</div>
+
+<% } else { %>
+<p>no album found.</p>
 <% } %>
+<h3>songs from this artist:</h3>
+<% if(songs.length){ %>
+<div class="artist-songs">
+  <% for(const [index, song] of songs.entries()){  %>
+  <span><a href="<%= song.url%>"><%= song.title%> </a></span>
+  <% } %>
+</div>
+
+<% } else { %>
+<p>no songs found.</p>
+<% } %>
+<% if(error) { %>
+<div class="error-message-container">
+  <%- include('../../public/images/x.svg') %>
+  <p class="error-message"><%= error%></p>
+</div>
+<% } %>
+<script>
+  const errorContainer = document.querySelector('div.error-message-container'); 
+    if(errorContainer){
+        setTimeout(() => {
+            errorContainer.style.display = 'none'
+        }, 3000)
+    }
+
+</script>
