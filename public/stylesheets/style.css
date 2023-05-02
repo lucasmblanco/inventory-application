@@ -614,6 +614,11 @@ li.error-message{
   padding-inline: 2rem;
 }
 
+section.category-section ul > p {
+  grid-column: span 4;
+  place-self: center;
+}
+
 @media (min-width: 60em) {
   header{
     grid-auto-flow: column;
