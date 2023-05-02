@@ -23,7 +23,7 @@ var app = express();
 
 
 
-const db = process.env.MONGODB_URL|| dev_db_url; 
+const db = process.env.MONGODB_URL;
 mongoose.set("strictQuery", false);
 main().catch(err => console.log(err)); 
 
