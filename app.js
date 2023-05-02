@@ -15,7 +15,6 @@ const artistsRouter = require("./routes/artistsRoute");
 const albumsRouter = require("./routes/albumsRoute"); 
 const songsRouter = require("./routes/songsRoute"); 
 const genreRouter = require("./routes/genresRoute"); 
-const testRouter = require("./routes/testRoute"); 
 
 var app = express();
 
@@ -23,7 +22,7 @@ var app = express();
 
 
 
-const db = process.env.MONGODB_URL;
+const db = process.env.MONGO_URL;
 mongoose.set("strictQuery", false);
 main().catch(err => console.log(err)); 
 
