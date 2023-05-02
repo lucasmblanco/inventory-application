@@ -8,17 +8,13 @@
                  <li><a href="<%= song.url%>"><%= song.title%></a> by <a href="<%= song.artist.url%>"><%= song.artist.name%></a></li>
            <%  } %>
          <% } else { %>
-             <p>No song found with this genre</p>
+             <li>No song found with this genre</li>
          <% } %>
      </ul>
 </section>
 <div class="panel">
-    <div>
-        <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
-    </div>
-    <div>
-            <button type="button" id="delete-button" class="delete-button">Delete</button>
-    </div>
+    <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
+    <button type="button" id="delete-button" class="delete-button">Delete</button>
 </div>
 <div class="popup-container" hidden>
     <form action=<%=`${url}/?_method=DELETE`%> method="POST">
@@ -48,6 +44,7 @@
     }
     function showPopup(){
         popupContainer.hidden = false; 
+        popupContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
     const errorContainer = document.querySelector('div.error-message-container'); 

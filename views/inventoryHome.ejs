@@ -1,24 +1,27 @@
 <%- include('index.ejs') %>
-<h2><%= title%></h2>
+<main>
+  <h2><%= title%></h2>
 <div class="tab-container">
   <div class="main-tab">
     <div><%= artist %> </div><div><a href="/artists">Artists</a></div>
     <div class="svg-container"><%- include('../public/images/mic.svg') %></div>
-    <div class="add-button-container"><a href="/artists/create" class="add-button">ADD</a></div>
+    <div class="add-button-container add-home-button"><a href="/artists/create" class="add-button">ADD</a></div>
   </div>
   <div class="main-tab">
     <div><%= album %> </div><div><a href="/albums">Albums</a></div>
     <div class="svg-container"><%- include('../public/images/disc.svg') %></div>
-    <div class="add-button-container"><a href="/artists/create" class="add-button">ADD</a></div>
+    <div class="add-button-container add-home-button"><a href="/artists/create" class="add-button">ADD</a></div>
   </div>
   <div class="main-tab">
     <div><%= song %> </div><div><a href="/songs">Songs</a></div>
     <div class="svg-container"><%- include('../public/images/music.svg') %></div>
-    <div class="add-button-container"><a href="/artists/create" class="add-button">ADD</a></div>
+    <div class="add-button-container add-home-button"><a href="/artists/create" class="add-button">ADD</a></div>
   </div>
   <div class="main-tab">
     <div><%= genre %></div> <div><a href="/genres">Genres</a></div>
     <div class="svg-container"><%- include('../public/images/tag.svg') %></div>
-    <div class="add-button-container"><a href="/artists/create" class="add-button">ADD</a></div>
+    <div class="add-button-container add-home-button"><a href="/artists/create" class="add-button">ADD</a></div>
   </div>
 </div>
+</main>
+<%- include('partials/footer.ejs') %>

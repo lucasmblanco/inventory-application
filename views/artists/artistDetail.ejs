@@ -1,63 +1,90 @@
-<%- include('../index.ejs') %>
 
-<h2><%= title%></h2>
-<div class="img-container">
-  <img src="data:image/jpeg;base64,<%= photo %>" alt="">
+
+<div class="sticky-header">
+  <%- include('../index.ejs') %>
+  <h2><%= title%></h2>
 </div>
-<div class="year-information">
-  <span><%= formation_year%> - <%= disbandment_year%></span>
-</div>
-<div class="biography-information">
-  <p><%= biography%></p>
-</div>
-<div class="panel">
-  <div>
-    <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
+
+
+<main class="element-detail">
+  <div class="img-container">
+    <img src="data:image/jpeg;base64,<%= photo %>" alt="">
   </div>
-  <div>
+  <div class="year-information">
+    <span><%= formation_year%> - <%= disbandment_year%></span>
+  </div>
+  <div class="biography-information">
+    <p><%= biography%></p>
+  </div>
+  <div class="panel">
+      <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
+      <button type="button" id="delete-button" class="delete-button" >Delete</button>
+  </div>
+  <div class="popup-container" hidden>
     <form action=<%=`${url}/?_method=DELETE`%> method="POST">
-      <button class="delete-button" type="submit">Delete</button>
+        <label for="delete">Are you sure you want to delete this artist?</label>
+        <div class="form-control">
+            <button type="submit" name="delete" id="delete-action">Confirm</button>
+        <button type="button" id="cancel-button" class="delete-button">Cancel</button>
+        </div>
     </form>
   </div>
-</div>
-<h3>albums from this artist:</h3>
-<% if(albums.length){ %>
-<div class="artist-albums">
-  <% for(const [index, album] of albums.entries()){  %>
-  <div>
-    <a href="<%= album.url%>">
-      <img src="data:image/jpeg;base64,<%= album.cover %>" alt="">
-      <span><%= album.title%></span>
-    </a>
-
-
+  <section class="artist-content">
+    <h3>albums from this artist:</h3>
+  <% if(albums.length){ %>
+  <div class="artist-albums">
+    <% for(const [index, album] of albums.entries()){  %>
+    <div>
+      <a href="<%= album.url%>">
+        <img src="data:image/jpeg;base64,<%= album.cover %>" alt="">
+        <span><%= album.title%></span>
+      </a>
+    </div>
+    <% } %>
   </div>
-
+  
+  <% } else { %>
+  <p>no album found.</p>
   <% } %>
-</div>
-
-<% } else { %>
-<p>no album found.</p>
-<% } %>
-<h3>songs from this artist:</h3>
-<% if(songs.length){ %>
-<div class="artist-songs">
-  <% for(const [index, song] of songs.entries()){  %>
-  <span><a href="<%= song.url%>"><%= song.title%> </a></span>
+  <h3>songs from this artist:</h3>
+  <% if(songs.length){ %>
+  <div class="artist-songs">
+    <% for(const [index, song] of songs.entries()){  %>
+    <span><a href="<%= song.url%>"><%= song.title%> </a></span>
+    <% } %>
+  </div>
+  
+  <% } else { %>
+  <p>no songs found.</p>
   <% } %>
-</div>
+  <% if(error) { %>
+  <div class="error-message-container">
+    <%- include('../../public/images/x.svg') %>
+    <p class="error-message"><%= error%></p>
+  </div>
+  <% } %>
+  
+  </section>
+</main>
 
-<% } else { %>
-<p>no songs found.</p>
-<% } %>
-<% if(error) { %>
-<div class="error-message-container">
-  <%- include('../../public/images/x.svg') %>
-  <p class="error-message"><%= error%></p>
-</div>
-<% } %>
 <script>
-  const errorContainer = document.querySelector('div.error-message-container'); 
+   const popupContainer = document.querySelector('div.popup-container'); 
+    const deleteButton = document.querySelector('button#delete-button'); 
+    const cancelButton = document.querySelector('button#cancel-button'); 
+    const errorContainer = document.querySelector('div.error-message-container'); 
+
+    deleteButton.addEventListener('click', showPopup); 
+    cancelButton.addEventListener('click', disablePopup); 
+
+    function disablePopup(){
+        popupContainer.hidden = true; 
+    }
+    function showPopup(){
+        popupContainer.hidden = false; 
+        popupContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+  
     if(errorContainer){
         setTimeout(() => {
             errorContainer.style.display = 'none'

@@ -14,12 +14,8 @@
     <p>Not genres found.</p>
 <% } %>
 <div class="panel">
-    <div>
-        <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
-    </div>
-    <div>
-        <button type="button" id="delete-button"  class="delete-button">Delete</button>
-    </div>
+    <a href=<%=`${url}/edit`%> class="edit-information">Edit</a>
+    <button type="button" id="delete-button"  class="delete-button">Delete</button>
 </div>
 <div class="popup-container" hidden>
     <form action=<%=`${url}/?_method=DELETE`%> method="POST">
@@ -43,6 +39,7 @@
     }
     function showPopup(){
         popupContainer.hidden = false; 
+        popupContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
 

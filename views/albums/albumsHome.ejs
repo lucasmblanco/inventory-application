@@ -1,7 +1,11 @@
-<%- include('../index.ejs') %>
-<h2><%= title %></h2>
+
+<div class="sticky-header">
+  <%- include('../index.ejs') %>
+  <h2><%= title %></h2>
+  <div class="add-button-container add-element"><a href="/albums/create" class="add-button">Add</a></div>
+</div>
+
 <section class="category-section albums-section">
-  <div class="add-button-container"><a href="/albums/create" class="add-button">Add</a></div>
 <ul>
     <% if(albums.length > 0 ) { %>
       <% for(const album of albums) {%>
@@ -12,3 +16,4 @@
       <% } %>
   </ul>
 </section>
+<%- include('../partials/footer.ejs') %>

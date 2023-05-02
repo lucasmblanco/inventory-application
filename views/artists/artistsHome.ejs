@@ -1,8 +1,11 @@
-<%- include("../index.ejs") %>
 
-<h2><%= title %></h2>
+<div class="sticky-header">
+  <%- include("../index.ejs") %>
+  <h2><%= title %></h2>
+  <div class="add-button-container add-element"><a href="/artists/create" class="add-button">Add</a></div>
+</div>
+
 <section class="category-section">
-  <div class="add-button-container"><a href="/artists/create" class="add-button">Add</a></div>
 <ul>
   <% if(artists.length > 0 ) { %>
     <% for(const artist of artists) {%>
@@ -13,3 +16,4 @@
     <% } %>
 </ul>
 </section>
+<%- include('../partials/footer.ejs') %>

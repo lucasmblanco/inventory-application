@@ -16,7 +16,7 @@
     </div>
     <div class="field-container">
         <label for="biography">Biography:</label>
-        <textarea name="biography" id="biography" cols="30" rows="5"  value="<%= artist ? artist.biography : '' %>" required="true"></textarea>
+        <textarea name="biography" id="biography" cols="30" rows="5"  required="true"><%= artist ? artist.biography : '' %></textarea>
     </div>
     <div class="field-container">
         <label for="photo">Photo: </label>
@@ -28,7 +28,7 @@
     <% if(errors.length > 0) { %>
         <ul>
             <% errors.forEach(error => { %> 
-                <li><%= error.msg%></li>
+                <li class="error-message"><%= error.msg%></li>
             <% }) %>
         </ul>
     <% } %>

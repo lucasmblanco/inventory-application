@@ -18,15 +18,23 @@
   }
 
 body {
+  display: flex;
+  flex-direction: column;
   background-color: var(--main-bg-color);
   font-family: var(--main-font); 
+  min-height: 100vh;
+}
 
+body:not(p){
+  user-select: none;
 }
 
 header{
   display: grid;
   grid-auto-flow: row;
   min-width: 100%;
+  border-bottom: 3px solid black;
+  background-color: var(--main-bg-color);
 }
 
 h1{
@@ -75,7 +83,14 @@ nav.navigation-bar > ul li a:hover{
   color: var(--main-bg-color);
 }
 
-section.category-section div.add-button-container a{
+section.category-section div.add-button-container, div.add-element{
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding-block: .3rem;
+}
+
+section.category-section div.add-button-container a, div.add-element a {
   text-decoration: none;
   color: white;
   background-color: black;
@@ -92,6 +107,7 @@ hr{
 }
 
 h2{
+  background-color: var(--main-bg-color);
   width: 100%;
   color:  var(--main-font-color); 
   font-size: var(--step-3);
@@ -152,6 +168,7 @@ div.main-tab div:nth-child(4) a{
 section.category-section{
   display: grid;
   place-items: center;
+  overflow-y: auto;
 }
 
 section.category-section ul{
@@ -160,7 +177,6 @@ section.category-section ul{
   gap: 1rem;
   padding-block: 1rem; 
   width: 100%;
-  
 }
 
 section.category-section ul li {
@@ -196,10 +212,14 @@ img{
 
 div.year-information{
   display: grid;
-  place-items: center;
-  font-size: var(--step--1);
+  justify-content: center;
+  font-size: var(--step--3);
   padding-block: .5rem;
   font-weight: bold;
+}
+
+div.year-information span{
+  width: 100%;
 }
 
 div.biography-information{
@@ -213,6 +233,7 @@ div.panel{
   grid-auto-flow: column;
   place-items: center;
   padding-block: .5rem;
+  gap: 1rem;
 }
 
 a.edit-information{
@@ -360,6 +381,7 @@ p.error-message{
 
 
 
+
 div.information{
   display: grid;
   grid-auto-flow: row;
@@ -380,6 +402,7 @@ div.information a:hover{
 }
 
 div.popup-container{
+  margin-top: auto;
   padding-block: .5rem;
   background-color: var(--red-accent);
   color: var(--main-bg-color); 
@@ -399,13 +422,15 @@ div.popup-container div.form-control{
 }
 
 div.popup-container div.form-control button{
-  background-color: transparent;
-  color: var(--main-bg-color); 
-  border: none;
-  width: fit-content;
   margin-inline: .5rem;
   padding-inline: .5rem;
   padding-block: .3rem;
+  border: none;
+  width: fit-content;
+  background-color: transparent;
+  color: var(--main-bg-color); 
+    font-size: var(--step--1);
+    margin-block: 0; 
 }
 
 div.popup-container div.form-control button:hover{
@@ -537,6 +562,44 @@ div.svg-container{
   display: none;
 }
 
+
+h3 ~ p {
+  padding-inline: 1rem;
+  font-size: var(--step--2);
+}
+
+section.artist-content{
+  margin-block-start: 1rem;
+}
+
+footer {
+  display: grid;
+  place-items: center;
+  margin-top: auto;
+  padding-block: 1rem;
+}
+
+footer div{
+  display: flex;
+  gap: 1rem; 
+}
+
+footer img {
+  aspect-ratio: auto;
+  width: 10rem; 
+}
+
+div.sticky-header{
+  position: sticky;
+  top: 0;
+  background-color: var(--main-bg-color);
+}
+
+li.error-message{
+  color: var(--red-accent); 
+  padding-inline: 2rem;
+}
+
 @media (min-width: 60em) {
   header{
     grid-auto-flow: column;
@@ -555,9 +618,12 @@ div.svg-container{
     max-width: 14rem;
   }
 
+  
+
   div.tab-container div.main-tab div{
     width: 100%;
   }
+
 
   div.tab-container div.main-tab div:not(:nth-child(4)){
     text-align: center;
@@ -595,4 +661,115 @@ div.svg-container{
     width: 100%;
     margin-block-start: .5rem;
   }
+
+ 
+
+  section.category-section ul{
+    padding-inline: 15%;
+    grid-template-columns: repeat(4, 1fr);
+    
+  }
+
+  section.category-section ul li a:nth-child(2){
+    font-size: var(--step--3);
+    font-weight: normal;
+  }
+  section.category-section ul li{
+    place-items: center;
+  }
+
+  section.category-section ul li a{
+    width: fit-content;
+  }
+
+  section.albums-section ul li{
+    display: grid;
+    grid-auto-flow: row;
+
+    
+  }
+
+  section.songs-section ul li{
+    display: grid;
+    grid-auto-flow: row;
+  }
+
+  main.element-detail{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    padding-inline: 15%;
+
+  }
+
+  main.element-detail > div:nth-child(1){
+    display: grid;
+    align-items: start;
+    grid-row: 2;
+
+  }
+
+  main.element-detail > div:nth-child(2){
+    grid-row: 1;
+    grid-column: span 3;
+  }
+
+  main.element-detail > div:nth-child(3){
+    display: grid;
+    place-items: center;
+    grid-column: span 2;
+
+    
+    
+  }
+
+  main.element-detail > div:nth-child(4){
+    place-content: center;
+    grid-row: 3;
+    grid-column: span 3;
 }
+
+main.element-detail > section.artist-content {
+  grid-row: 4;
+  grid-column: span 3 ;
+}
+
+div.popup-container{
+  grid-column: span 3;
+}
+
+button[type=submit]:hover{
+  outline: 1px solid black;
+  outline-offset: 1px;
+}
+
+a.edit-information:hover{
+  outline: 1px solid black;
+  outline-offset: 1px;
+}
+
+button.delete-button:hover{
+  outline: 1px solid var(--red-accent);
+  outline-offset: 1px;
+  transition: all;
+}
+
+div.panel a{
+  place-self: end;
+}
+
+div.panel button{
+  place-self: start;
+}
+
+form.main-form{
+  padding-inline: 15%;
+}
+
+li.error-message{
+  padding-inline: 15%;
+  color: var(--red-accent); 
+  font-size: var(--step--1);
+}
+
+}
+
