@@ -5,6 +5,7 @@
     --main-font-color-less-opacity: hsla(0, 0%, 27%, 0.5);
     --red-accent:hsl(0, 100%, 43%); 
     --red-accent-darker:hsl(0, 99%, 26%); 
+    --dark-accent: 	hsl(210, 8%, 14%); 
     --step--3: clamp(0.58rem, calc(0.29rem + 1.21vw), 1.24rem);
     --step--2: clamp(0.69rem, calc(0.42rem + 1.15vw), 1.32rem);
     --step--1: clamp(0.83rem, calc(0.58rem + 1.06vw), 1.41rem);
@@ -33,7 +34,7 @@ header{
   display: grid;
   grid-auto-flow: row;
   min-width: 100%;
-  border-bottom: 3px solid black;
+  border-bottom: 3px solid var(--dark-accent);
   background-color: var(--main-bg-color);
 }
 
@@ -93,10 +94,15 @@ section.category-section div.add-button-container, div.add-element{
 section.category-section div.add-button-container a, div.add-element a {
   text-decoration: none;
   color: white;
-  background-color: black;
+  background-color: var(--dark-accent);
   font-size: var(--step--2);
   padding-inline: 0.5rem;
   padding-block: 0.3rem;
+}
+
+div.add-element a:hover{
+  outline: 1px solid var(--dark-accent);
+  outline-offset: 1px;
 }
 
 hr{
@@ -138,7 +144,7 @@ div.tab-container{
 div.main-tab{
   display: grid;
   grid-auto-flow: column;
-  border: 3px solid black;
+  border: 3px solid var(--dark-accent);
   width: 100%;
   place-items: center;
 }
@@ -158,7 +164,7 @@ div.main-tab div a {
 div.main-tab div:nth-child(4) a{
   display: block;
   color: white;
-  background-color: black;
+  background-color: var(--dark-accent);
   font-size: var(--step--2);
   padding-inline: 0.5rem;
   padding-block: 0.3rem;
@@ -166,7 +172,7 @@ div.main-tab div:nth-child(4) a{
 }
 
 div.main-tab div:nth-child(4) a:hover{
-  outline: 1px solid black;
+  outline: 1px solid var(--dark-accent);
   outline-offset: 1px;
 }
 
@@ -243,7 +249,7 @@ div.panel{
 }
 
 a.edit-information{
-  background-color: black;
+  background-color: var(--dark-accent);
   color: var(--main-bg-color); 
   font-size: var(--step--1);
   padding-inline: .5rem;
@@ -310,7 +316,7 @@ div.artist-songs span a {
 }
 
 div.artist-songs span:hover{
-  background-color: black;
+  background-color: var(--dark-accent);
 }
 
 div.artist-albums {
@@ -469,7 +475,7 @@ form.main-form div.field-container{
 form.main-form div.field-container input{
   background-color: transparent;
   border: none;
-  border-bottom: 3px solid black; 
+  border-bottom: 3px solid var(--dark-accent); 
   flex-grow: 1;
   outline: none;
 }
@@ -490,7 +496,8 @@ form.main-form div.field-container input[type=file]{
 form.main-form div.field-container textarea{
   padding: .5rem;
   background-color: transparent;
-  border: 3px solid black;
+  border: 3px solid var(--dark-accent);
+  resize: none;
   
 }
 
@@ -501,7 +508,7 @@ form.main-form div.field-container textarea:focus{
 form.main-form div.field-container input[type=file]::file-selector-button{
   font-family: var(--main-font);
   color: var(--main-bg-color);
-  background-color: black;
+  background-color: var(--dark-accent);
   border: none;
   padding-inline: .5rem;
   padding-block: .3rem;
@@ -512,7 +519,7 @@ button[type=submit]{
   place-self: center;
   text-decoration: none;
   color: white;
-  background-color: black;
+  background-color: var(--dark-accent);
   padding-inline: 0.5rem;
   padding-block: 0.3rem;
   border: none;
@@ -637,13 +644,13 @@ li.error-message{
   }
 
   div.tab-container div.main-tab div:nth-child(1){
-    border-top: 3px solid black;
-    border-inline: 3px solid black;
+    border-top: 3px solid var(--dark-accent);
+    border-inline: 3px solid var(--dark-accent);
     padding-block-start: 1rem;
   }
 
   div.tab-container div.main-tab div:nth-child(2){
-    border-inline: 3px solid black;
+    border-inline: 3px solid var(--dark-accent);
     padding-inline: .5rem;
   }
 
@@ -652,8 +659,8 @@ li.error-message{
   div.tab-container div.main-tab div.svg-container{
     display: grid;
     place-items: center;
-    border-bottom: 3px solid black;
-    border-inline: 3px solid black;
+    border-bottom: 3px solid var(--dark-accent);
+    border-inline: 3px solid var(--dark-accent);
   }
 
   div.tab-container div.main-tab div.svg-container svg{
@@ -724,8 +731,6 @@ li.error-message{
     display: grid;
     place-items: center;
     grid-column: span 2;
-
-    
     
   }
 
@@ -746,12 +751,12 @@ div.popup-container{
 }
 
 button[type=submit]:hover{
-  outline: 1px solid black;
+  outline: 1px solid var(--dark-accent);
   outline-offset: 1px;
 }
 
 a.edit-information:hover{
-  outline: 1px solid black;
+  outline: 1px solid var(--dark-accent);
   outline-offset: 1px;
 }
 
