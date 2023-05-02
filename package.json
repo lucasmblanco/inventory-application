@@ -2,9 +2,12 @@
   "name": "inventory-application",
   "version": "0.0.0",
   "private": true,
+  "engines": {
+    "node": ">=18.15.0"
+  },
   "scripts": {
-    "start": "node --experimental-fetch ./bin/www",
-    "devstart": "nodemon --experimental-fetch ./bin/www"
+    "start": "node ./bin/www",
+    "devstart": "nodemon ./bin/www"
   },
   "dependencies": {
     "@web-std/file": "^3.0.2",

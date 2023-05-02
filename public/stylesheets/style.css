@@ -154,16 +154,22 @@ div.main-tab div a {
   color: var(--main-font-color);
 }
 
-div.main-tab div:nth-child(4){
+
+div.main-tab div:nth-child(4) a{
+  display: block;
+  color: white;
   background-color: black;
   font-size: var(--step--2);
   padding-inline: 0.5rem;
   padding-block: 0.3rem;
+  width: 100%;
 }
 
-div.main-tab div:nth-child(4) a{
-  color: white;
+div.main-tab div:nth-child(4) a:hover{
+  outline: 1px solid black;
+  outline-offset: 1px;
 }
+
 
 section.category-section{
   display: grid;
@@ -435,7 +441,8 @@ div.popup-container div.form-control button{
 
 div.popup-container div.form-control button:hover{
   background-color: var(--main-bg-color);
-  color: var(--red-accent)
+  color: var(--red-accent);
+  outline: none;
 }
 
 
@@ -750,7 +757,6 @@ a.edit-information:hover{
 button.delete-button:hover{
   outline: 1px solid var(--red-accent);
   outline-offset: 1px;
-  transition: all;
 }
 
 div.panel a{

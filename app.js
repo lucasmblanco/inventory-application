@@ -21,7 +21,9 @@ var app = express();
 
 //------ Connect with db -------
 
-const db = process.env.MONGO_URL; 
+
+
+const db = process.env.MONGODB_URL|| dev_db_url; 
 mongoose.set("strictQuery", false);
 main().catch(err => console.log(err)); 
 
@@ -50,8 +52,7 @@ app.use('/artists', artistsRouter);
 app.use('/albums', albumsRouter);
 app.use('/songs', songsRouter);
 app.use('/genres', genreRouter)
-//app.use('/test', testRouter)
-//app.use('/users', usersRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
