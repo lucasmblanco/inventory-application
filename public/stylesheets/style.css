@@ -741,7 +741,8 @@ main.element-detail > section.artist-content {
 }
 
 div.popup-container{
-  grid-column: span 3;
+  /* grid-column: span 3; */
+  margin-inline: 15%;
 }
 
 button[type=submit]:hover{
