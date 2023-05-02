@@ -25,18 +25,6 @@
         <label for="release_year">Release year: </label>
         <input type="number" name="release_year" id="release_year" value="<%= album ? album.release_year : '' %>" required="true">
     </div>
-    <div class="field-container">
-        <label for="genre">Genre: </label>
-        <select name="genre" id="genre">
-            <option value="" selected disabled hidden>Choose a genre</option>
-            <% if(genres.length > 0) { %>
-                <%  for(const genre of genres ) { %>
-               
-                <option value="<%= genre._id %>" <%= album ? album.genre[0]._id.toString() === genre._id.toString() && 'selected' : '' %>><%= genre.name%></option>
-                <% } %>
-           <%  } %>
-        </select>
-    </div>
     <button type="submit">Submit</button>
 </form>
 <div>

@@ -19,10 +19,6 @@ const AlbumSchema = new Schema({
         type: Number,
         required: true
     },
-    genre: [{
-        type: Schema.Types.ObjectId, 
-        ref: "Genre",
-    }],
 })
 
 AlbumSchema.virtual("url").get(function () {

@@ -1,6 +1,6 @@
 const Album = require("../models/album");
 const Artist = require("../models/artist");
-const Genre = require("../models/genre");
+//const Genre = require("../models/genre");
 const Song = require("../models/song"); 
 const multer = require("multer");
 const path = require("path");
@@ -58,7 +58,6 @@ const getDetails = async function (req, res, next) {
     const [albumDetail, songs] = await Promise.all([
       Album.findById(req.params.id)
         .populate("artist")
-        .populate("genre")
         .exec(),
       Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec()
     ])
@@ -68,7 +67,7 @@ const getDetails = async function (req, res, next) {
       artist: albumDetail.artist,
       cover: albumDetail.cover,
       release_year: albumDetail.release_year,
-      genres: albumDetail.genre,
+      //genres: albumDetail.genre,
       url: albumDetail.url,
       error: false,
       songs
@@ -80,17 +79,14 @@ const getDetails = async function (req, res, next) {
 
 const getCreateAlbum = async function (req, res, next) {
   try {
-    const [artists, genres] = await Promise.all([
-      Artist.find({}, "name formation_year").exec(),
-      Genre.find().exec(),
-    ]);
+    const artists = await Artist.find({}, "name formation_year").exec();
+
 
     res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
       title: "Create album",
       album: false,
       errors: false,
       artists,
-      genres,
       edit: false
     });
   } catch (err) {
@@ -112,11 +108,7 @@ const postCreateAlbum = [
     .escape()
     .withMessage("Artist must be specific."),
   body("release_year", "Release year must not be empty").isISO8601().toInt(),
-  body("genre", "Genre must not be empty")
-    .trim()
-    .isLength({ min: 1 })
-    .escape()
-    .withMessage("Genre must be specific."),
+
   async (req, res, next) => {
     const errors = validationResult(req);
     if (req.fileValidationError) {
@@ -129,17 +121,15 @@ const postCreateAlbum = [
     }
     if (!errors.isEmpty()) {
       try {
-        const [artists, genres] = await Promise.all([
-          Artist.find({}, "name formation_year").exec(),
-          Genre.find().exec(),
-        ]);
-
+        const artists = await
+          Artist.find({}, "name formation_year").exec(); 
+        
         res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
           title: "Create album",
           album: req.body,
           errors: errors.array(),
           artists,
-          genres,
+  
           edit: false
         });
       } catch (err) {
@@ -160,7 +150,6 @@ const postCreateAlbum = [
             artist: req.body.artist,
             cover: imgBase64,
             release_year: req.body.release_year,
-            genre: req.body.genre,
           });
           await album.save();
           res.redirect(album.url);
@@ -174,10 +163,10 @@ const postCreateAlbum = [
 
 const getEditAlbum = async (req, res, next) => {
   try {
-    const [album, artists, genres] = await Promise.all([
-      Album.findById(req.params.id).populate("artist").populate("genre").exec(),
+    const [album, artists] = await Promise.all([
+      Album.findById(req.params.id).populate("artist").exec(),
       Artist.find({}, "name formation_year").exec(),
-      Genre.find().exec(),
+  
     ]);
 
     res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
@@ -185,7 +174,6 @@ const getEditAlbum = async (req, res, next) => {
       errors: false,
       album,
       artists,
-      genres,
       edit: true
     });
   } catch (err) {
@@ -205,11 +193,6 @@ const postEditAlbum = [
     .escape()
     .withMessage("Artist must be specific."),
   body("release_year", "Release year must not be empty").isISO8601().toInt(),
-  body("genre", "Genre must not be empty")
-    .trim()
-    .isLength({ min: 1 })
-    .escape()
-    .withMessage("Genre must be specific."),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (req.fileValidationError) {
@@ -222,10 +205,9 @@ const postEditAlbum = [
     }
     if (!errors.isEmpty()) {
       try {
-        const [artists, genres] = await Promise.all([
-          Artist.find({}, "name formation_year").exec(),
-          Genre.find().exec(),
-        ]);
+        const artists = await
+          Artist.find({}, "name formation_year").exec();
+     
 
         return res.render(
           path.join(__dirname, "..", "views", "albums", "albumForm"),
@@ -234,7 +216,7 @@ const postEditAlbum = [
             album: req.body,
             errors: errors.array(),
             artists,
-            genres,
+  
             edit: true
           }
         );
@@ -250,10 +232,10 @@ const postEditAlbum = [
         if (checkAlbumExistence) {
           if (req.params.id.toString() !== checkAlbumExistence._id.toString()) {
             try {
-              const [artists, genres] = await Promise.all([
-                Artist.find({}, "name formation_year").exec(),
-                Genre.find().exec(),
-              ]);
+              const artists = await
+                Artist.find({}, "name formation_year").exec();
+            
+
               return res.render(
                 path.join(
                   __dirname,
@@ -271,7 +253,7 @@ const postEditAlbum = [
                     },
                   ],
                   artists,
-                  genres,
+
                 }
               );
             } catch (err) {
@@ -302,7 +284,6 @@ const postEditAlbum = [
           artist: req.body.artist,
           cover: imgBase64,
           release_year: req.body.release_year,
-          genre: req.body.genre,
           _id: req.params.id,
         });
         const albumUpdated = await Album.findByIdAndUpdate(
@@ -324,7 +305,6 @@ const deleteAlbum = async (req, res, next) => {
     const [albumDetail, songs] = await Promise.all([
       Album.findById(req.params.id)
         .populate("artist")
-        .populate("genre")
         .exec(),
       Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec()
     ])
@@ -335,7 +315,6 @@ const deleteAlbum = async (req, res, next) => {
           artist: albumDetail.artist,
           cover: albumDetail.cover,
           release_year: albumDetail.release_year,
-          genres: albumDetail.genre,
           url: albumDetail.url,
           error: "You cannot delete this album because is in use",
           songs

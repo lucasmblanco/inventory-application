@@ -15,13 +15,7 @@
 
 <div class="information">
     <div class="year-information"><p><%= release_year%></p></div>
-<% if(genres.length > 0) { %>
-    <% for(const genre of genres) { %>
-        <a href="<%= genre.url%>"><%= genre.name%></a>
-        <% } %>
-<% } else { %>
-    <span>Genre not found.</span>
-    <% } %>
+
 </div>
 <div class="tracklist">
     <p>Tracklist</p>
