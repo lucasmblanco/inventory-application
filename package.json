@@ -6,7 +6,7 @@
     "node": ">=18.15.0"
   },
   "scripts": {
-    "lint": "eslint ./controllers --fix",
+    "lint": "eslint ./routes  --fix",
     "start": "node ./bin/www",
     "devstart": "nodemon ./bin/www"
   },

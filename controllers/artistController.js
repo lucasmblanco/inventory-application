@@ -33,10 +33,13 @@ const upload = multer({
   fileFilter,
 });
 
-const getHome = async (req, res, next) => {
+const getHome = async function (req, res, next) {
   try {
-    const artistsResult = await Artist.find({}, 'name').collation({ locale: 'en' }).sort({ name: 1 }).exec();
-    res.render(
+    const artistsResult = await Artist.find({}, 'name')
+      .collation({ locale: 'en' })
+      .sort({ name: 1 })
+      .exec();
+    return res.render(
       path.join(__dirname, '..', 'views', 'artists', 'artistsHome.ejs'),
       {
         title: 'Artists',
@@ -48,14 +51,14 @@ const getHome = async (req, res, next) => {
   }
 };
 
-const getDetails = async (req, res, next) => {
+const getDetails = async function (req, res, next) {
   try {
     const [artistDetail, artistSongs, artistAlbum] = await Promise.all([
       Artist.findById(req.params.id).exec(),
       Song.find({ artist: req.params.id }).sort({ title: 1 }).exec(),
       Album.find({ artist: req.params.id }).sort({ title: 1 }).exec(),
     ]);
-    res.render(
+    return res.render(
       path.join(__dirname, '..', 'views', 'artists', 'artistDetail.ejs'),
       {
         title: artistDetail.name,
@@ -70,7 +73,7 @@ const getDetails = async (req, res, next) => {
       },
     );
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -92,6 +95,13 @@ const getCreateArtist = async (req, res, next) => {
 
 const uploadPhotoArtist = upload.single('photo');
 
+const bringBackQuotes = (value) => {
+  if (value === '&quot;') {
+    return '"';
+  }
+  return "'";
+};
+
 const postCreateArtist = [
   body('name')
     .trim()
@@ -101,10 +111,10 @@ const postCreateArtist = [
   body('formation_year').isISO8601().toInt(),
   body('disbandment_year')
     .customSanitizer((value) => {
-      if (isNaN(value)) {
+      if (Number.isNaN(value)) {
         return false;
       }
-      return parseInt(value);
+      return Number(value);
     })
     .optional({ checkFalsy: true })
     .isISO8601(),
@@ -128,7 +138,7 @@ const postCreateArtist = [
     }
     if (!errors.isEmpty()) {
       try {
-        res.render(
+        return res.render(
           path.join(__dirname, '..', 'views', 'artists', 'artistForm.ejs'),
           {
             title: 'Create Artist',
@@ -146,22 +156,24 @@ const postCreateArtist = [
           name: req.body.name,
         }).exec();
         if (checkArtistExistence) {
-          res.redirect(checkArtistExistence.url);
-        } else {
-          const imgData = await fs.readFile(req.file.path);
-          const imgBase64 = Buffer.from(imgData).toString('base64');
-          const artist = new Artist({
-            name: req.body.name,
-            formation_year: req.body.formation_year,
-            disbandment_year: req.body.disbandment_year
-              ? req.body.disbandment_year
-              : 'present',
-            biography: req.body.biography.replace(/&#x27;|&quot;/g, bringBackQuotes),
-            photo: imgBase64,
-          });
-          await artist.save();
-          res.redirect(artist.url);
+          return res.redirect(checkArtistExistence.url);
         }
+        const imgData = await fs.readFile(req.file.path);
+        const imgBase64 = Buffer.from(imgData).toString('base64');
+        const artist = new Artist({
+          name: req.body.name,
+          formation_year: req.body.formation_year,
+          disbandment_year: req.body.disbandment_year
+            ? req.body.disbandment_year
+            : 'present',
+          biography: req.body.biography.replace(
+            /&#x27;|&quot;/g,
+            bringBackQuotes,
+          ),
+          photo: imgBase64,
+        });
+        await artist.save();
+        return res.redirect(artist.url);
       } catch (err) {
         return next(err);
       }
@@ -169,18 +181,10 @@ const postCreateArtist = [
   },
 ];
 
-function bringBackQuotes(value) {
-  if (value === '&quot;') {
-    return '"';
-  } if (value === '&#x27;') {
-    return "'";
-  }
-}
-
-const getEditArtist = async (req, res, next) => {
+const getEditArtist = async function (req, res, next) {
   try {
     const artist = await Artist.findById(req.params.id).exec();
-    res.render(
+    return res.render(
       path.join(__dirname, '..', 'views', 'artists', 'artistForm.ejs'),
       {
         title: 'Edit artist information',
@@ -203,10 +207,10 @@ const postEditArtist = [
   body('formation_year').isISO8601().toInt(),
   body('disbandment_year')
     .customSanitizer((value) => {
-      if (isNaN(value)) {
+      if (Number.isNaN(value)) {
         return false;
       }
-      return parseInt(value);
+      return Number(value);
     })
     .optional({ checkFalsy: true })
     .isISO8601(),
@@ -282,7 +286,10 @@ const postEditArtist = [
           disbandment_year: req.body.disbandment_year
             ? req.body.disbandment_year
             : 'present',
-          biography: req.body.biography.replace(/&#x27;|&quot;/g, bringBackQuotes),
+          biography: req.body.biography.replace(
+            /&#x27;|&quot;/g,
+            bringBackQuotes,
+          ),
           photo: imgBase64,
           _id: req.params.id,
         });
@@ -324,8 +331,7 @@ const deleteArtist = async (req, res, next) => {
             url: artistDetail.url,
             songs: artistSongs,
             albums: artistAlbums,
-            error:
-              'You cannot delete this artist',
+            error: 'You cannot delete this artist',
           },
         );
       } catch (err) {

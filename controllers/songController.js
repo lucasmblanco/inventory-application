@@ -8,9 +8,12 @@ const Genre = require('../models/genre');
 
 const getHome = async function (req, res, next) {
   try {
-    const songsResult = await Song.find({}, 'title artist').populate('artist').collation({ locale: 'en' }).sort({ title: 1 })
+    const songsResult = await Song.find({}, 'title artist')
+      .populate('artist')
+      .collation({ locale: 'en' })
+      .sort({ title: 1 })
       .exec();
-    res.render(path.join(__dirname, '..', 'views', 'songs', 'songsHome.ejs'), {
+    return res.render(path.join(__dirname, '..', 'views', 'songs', 'songsHome.ejs'), {
       title: 'Songs',
       songs: songsResult,
     });
@@ -21,7 +24,11 @@ const getHome = async function (req, res, next) {
 
 const getDetails = async function (req, res, next) {
   try {
-    const songDetail = await Song.findById(req.params.id).populate(['artist', 'album', 'genre']);
+    const songDetail = await Song.findById(req.params.id).populate([
+      'artist',
+      'album',
+      'genre',
+    ]);
     res.render(path.join(__dirname, '..', 'views', 'songs', 'songDetail.ejs'), {
       title: songDetail.title,
       artist: songDetail.artist,
@@ -43,7 +50,7 @@ const getSongCreate = async function (req, res, next) {
       Genre.find().exec(),
     ]);
 
-    res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
+    return res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
       title: 'Create Song',
       song: false,
       errors: false,
@@ -87,15 +94,18 @@ const postSongCreate = [
           Album.find().populate('artist').exec(),
           Genre.find().exec(),
         ]);
-        res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
-          title: 'Create Song',
-          song: req.body,
-          errors: errors.array(),
-          artists,
-          albums,
-          genres,
-          edit: false,
-        });
+        return res.render(
+          path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'),
+          {
+            title: 'Create Song',
+            song: req.body,
+            errors: errors.array(),
+            artists,
+            albums,
+            genres,
+            edit: false,
+          },
+        );
       } catch (err) {
         return next(err);
       }
@@ -110,25 +120,26 @@ const postSongCreate = [
         });
 
         await song.save();
-        res.redirect(song.url);
+        return res.redirect(song.url);
       } catch (err) {
         return next(err);
       }
     }
   },
-
 ];
 
 const getEditSong = async (req, res, next) => {
   try {
     const [song, artists, albums, genres] = await Promise.all([
-      Song.findById(req.params.id).populate(['artist', 'album', 'genre']).exec(),
+      Song.findById(req.params.id)
+        .populate(['artist', 'album', 'genre'])
+        .exec(),
       Artist.find({}, 'name').exec(),
       Album.find().populate('artist').exec(),
       Genre.find().exec(),
     ]);
 
-    res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
+    return res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
       title: 'Edit song information',
       errors: false,
       song,
@@ -158,8 +169,7 @@ const postEditSong = [
     .isLength({ min: 1 })
     .escape()
     .withMessage('Album must be specific'),
-  body('track_number', 'Track number must not be empty')
-    .toInt(),
+  body('track_number', 'Track number must not be empty').toInt(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -169,15 +179,18 @@ const postEditSong = [
           Album.find().populate('artist').exec(),
           Genre.find().exec(),
         ]);
-        return res.render(path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'), {
-          title: 'Edit song information',
-          song: req.body,
-          errors: errors.array(),
-          artists,
-          albums,
-          genres,
-          edit: true,
-        });
+        return res.render(
+          path.join(__dirname, '..', 'views', 'songs', 'songForm.ejs'),
+          {
+            title: 'Edit song information',
+            song: req.body,
+            errors: errors.array(),
+            artists,
+            albums,
+            genres,
+            edit: true,
+          },
+        );
       } catch (err) {
         return next(err);
       }
@@ -192,7 +205,9 @@ const postEditSong = [
           _id: req.params.id,
         });
 
-        const songUpdated = await Song.findByIdAndUpdate(req.params.id, song, { new: true });
+        const songUpdated = await Song.findByIdAndUpdate(req.params.id, song, {
+          new: true,
+        });
         return res.redirect(songUpdated.url);
       } catch (err) {
         return next(err);
@@ -204,7 +219,7 @@ const postEditSong = [
 const deleteSong = async (req, res, next) => {
   try {
     await Song.findByIdAndDelete(req.params.id);
-    res.redirect('/songs');
+    return res.redirect('/songs');
   } catch (err) {
     return next(err);
   }

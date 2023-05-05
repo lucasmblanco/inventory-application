@@ -11,5 +11,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
+    'func-names': 'off',
+    'no-underscore-dangle': 'off',
   },
 };

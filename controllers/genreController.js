@@ -5,7 +5,10 @@ const Song = require('../models/song');
 
 const getHome = async (req, res, next) => {
   try {
-    const genresResult = await Genre.find({}).collation({ locale: 'en' }).sort({ name: 1 }).exec();
+    const genresResult = await Genre.find({})
+      .collation({ locale: 'en' })
+      .sort({ name: 1 })
+      .exec();
     res.render(
       path.join(__dirname, '..', 'views', 'genres', 'genresHome.ejs'),
       {
@@ -39,7 +42,7 @@ const getDetails = async (req, res, next) => {
   }
 };
 
-const getcreateGenre = (req, res, next) => {
+const getcreateGenre = (req, res) => {
   res.render(path.join(__dirname, '..', 'views', 'genres', 'genreForm.ejs'), {
     title: 'Create genre',
     genre: false,
@@ -71,7 +74,7 @@ const postcreateGenre = [
         }).exec();
         if (checkGenreExistence) {
           try {
-            res.redirect(checkGenreExistence.url);
+            return res.redirect(checkGenreExistence.url);
           } catch (err) {
             return next(err);
           }
@@ -102,7 +105,7 @@ const getEditGenre = async (req, res, next) => {
     ]);
     if (songs.length) {
       try {
-        res.render(
+        return res.render(
           path.join(__dirname, '..', 'views', 'genres', 'genreDetails.ejs'),
           {
             title: genre.name,
@@ -116,7 +119,7 @@ const getEditGenre = async (req, res, next) => {
       }
     } else {
       try {
-        res.render(
+        return res.render(
           path.join(__dirname, '..', 'views', 'genres', 'genreForm.ejs'),
           {
             title: 'Create genre',
@@ -216,7 +219,7 @@ const deleteGenre = async (req, res, next) => {
     } else {
       try {
         await Genre.findByIdAndRemove(req.params.id);
-        res.redirect('/genres');
+        return res.redirect('/genres');
       } catch (err) {
         return next(err);
       }
