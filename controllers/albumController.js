@@ -1,51 +1,50 @@
-const Album = require("../models/album");
-const Artist = require("../models/artist");
-//const Genre = require("../models/genre");
-const Song = require("../models/song"); 
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs/promises");
-const { body, validationResult } = require("express-validator");
+// const Genre = require("../models/genre");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs/promises');
+const { body, validationResult } = require('express-validator');
+const Song = require('../models/song');
+const Artist = require('../models/artist');
+const Album = require('../models/album');
 
 // ----- Multer Configuration -----
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
+  destination(req, file, cb) {
+    cb(null, 'uploads/');
   },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + "-" + Date.now());
+  filename(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}`);
   },
 });
 
 const fileFilter = function (req, file, cb) {
   if (
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg" ||
-    file.mimetype === "image/jpeg"
+    file.mimetype === 'image/png'
+    || file.mimetype === 'image/jpg'
+    || file.mimetype === 'image/jpeg'
   ) {
     cb(null, true);
   } else {
-    req.fileValidationError =
-      "Invalid file type. Only PNG, JPG and JPEG files are allowed.";
+    req.fileValidationError = 'Invalid file type. Only PNG, JPG and JPEG files are allowed.';
     cb(null, false);
   }
 };
 
 const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+  storage,
+  fileFilter,
 });
 // -----------------------------
 
 const getHome = async function (req, res, next) {
   try {
-    const albumsResults = await Album.find({}, "title artist")
-      .populate("artist")
-      .collation({locale: "en" })
-      .sort({title: 1})
+    const albumsResults = await Album.find({}, 'title artist')
+      .populate('artist')
+      .collation({ locale: 'en' })
+      .sort({ title: 1 })
       .exec();
-    res.render(path.join(__dirname, "..", "views", "albums", "albumsHome"), {
-      title: "Albums",
+    res.render(path.join(__dirname, '..', 'views', 'albums', 'albumsHome'), {
+      title: 'Albums',
       albums: albumsResults,
     });
   } catch (err) {
@@ -57,20 +56,20 @@ const getDetails = async function (req, res, next) {
   try {
     const [albumDetail, songs] = await Promise.all([
       Album.findById(req.params.id)
-        .populate("artist")
+        .populate('artist')
         .exec(),
-      Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec()
-    ])
+      Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec(),
+    ]);
 
-    res.render(path.join(__dirname, "..", "views", "albums", "albumDetail.ejs"), {
+    res.render(path.join(__dirname, '..', 'views', 'albums', 'albumDetail.ejs'), {
       title: albumDetail.title,
       artist: albumDetail.artist,
       cover: albumDetail.cover,
       release_year: albumDetail.release_year,
-      //genres: albumDetail.genre,
+      // genres: albumDetail.genre,
       url: albumDetail.url,
       error: false,
-      songs
+      songs,
     });
   } catch (err) {
     return next(err);
@@ -79,58 +78,57 @@ const getDetails = async function (req, res, next) {
 
 const getCreateAlbum = async function (req, res, next) {
   try {
-    const artists = await Artist.find({}, "name formation_year").exec();
+    const artists = await Artist.find({}, 'name formation_year').exec();
 
-
-    res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
-      title: "Create album",
+    res.render(path.join(__dirname, '..', 'views', 'albums', 'albumForm'), {
+      title: 'Create album',
       album: false,
       errors: false,
       artists,
-      edit: false
+      edit: false,
     });
   } catch (err) {
     return next(err);
   }
 };
 
-const uploadCoverAlbum = upload.single("cover");
+const uploadCoverAlbum = upload.single('cover');
 
 const postCreateAlbum = [
-  body("title", "Title must not be empty")
+  body('title', 'Title must not be empty')
     .trim()
     .isLength({ min: 1 })
     .escape()
-    .withMessage("Title must be specific."),
-  body("artist", "Artist must not be empty")
+    .withMessage('Title must be specific.'),
+  body('artist', 'Artist must not be empty')
     .trim()
     .isLength({ min: 1 })
     .escape()
-    .withMessage("Artist must be specific."),
-  body("release_year", "Release year must not be empty").isISO8601().toInt(),
+    .withMessage('Artist must be specific.'),
+  body('release_year', 'Release year must not be empty').isISO8601().toInt(),
 
   async (req, res, next) => {
     const errors = validationResult(req);
     if (req.fileValidationError) {
       errors.errors.push({
-        value: "invalid_format",
-        msg: "Invalid file type. Only PNG, JPG and JPEG files are allowed.",
-        param: "photo",
-        location: "file",
+        value: 'invalid_format',
+        msg: 'Invalid file type. Only PNG, JPG and JPEG files are allowed.',
+        param: 'photo',
+        location: 'file',
       });
     }
     if (!errors.isEmpty()) {
       try {
         const artists = await
-          Artist.find({}, "name formation_year").exec(); 
-        
-        res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
-          title: "Create album",
+        Artist.find({}, 'name formation_year').exec();
+
+        res.render(path.join(__dirname, '..', 'views', 'albums', 'albumForm'), {
+          title: 'Create album',
           album: req.body,
           errors: errors.array(),
           artists,
-  
-          edit: false
+
+          edit: false,
         });
       } catch (err) {
         return next(err);
@@ -144,7 +142,7 @@ const postCreateAlbum = [
           res.redirect(checkAlbumExistence.url);
         } else {
           const imgData = await fs.readFile(req.file.path);
-          const imgBase64 = Buffer.from(imgData).toString("base64");
+          const imgBase64 = Buffer.from(imgData).toString('base64');
           const album = new Album({
             title: req.body.title,
             artist: req.body.artist,
@@ -164,17 +162,17 @@ const postCreateAlbum = [
 const getEditAlbum = async (req, res, next) => {
   try {
     const [album, artists] = await Promise.all([
-      Album.findById(req.params.id).populate("artist").exec(),
-      Artist.find({}, "name formation_year").exec(),
-  
+      Album.findById(req.params.id).populate('artist').exec(),
+      Artist.find({}, 'name formation_year').exec(),
+
     ]);
 
-    res.render(path.join(__dirname, "..", "views", "albums", "albumForm"), {
-      title: "Edit album information",
+    res.render(path.join(__dirname, '..', 'views', 'albums', 'albumForm'), {
+      title: 'Edit album information',
       errors: false,
       album,
       artists,
-      edit: true
+      edit: true,
     });
   } catch (err) {
     return next(err);
@@ -182,43 +180,42 @@ const getEditAlbum = async (req, res, next) => {
 };
 
 const postEditAlbum = [
-  body("title", "Title must not be empty")
+  body('title', 'Title must not be empty')
     .trim()
     .isLength({ min: 1 })
     .escape()
-    .withMessage("Title must be specific."),
-  body("artist", "Artist must not be empty")
+    .withMessage('Title must be specific.'),
+  body('artist', 'Artist must not be empty')
     .trim()
     .isLength({ min: 1 })
     .escape()
-    .withMessage("Artist must be specific."),
-  body("release_year", "Release year must not be empty").isISO8601().toInt(),
+    .withMessage('Artist must be specific.'),
+  body('release_year', 'Release year must not be empty').isISO8601().toInt(),
   async (req, res, next) => {
     const errors = validationResult(req);
     if (req.fileValidationError) {
       errors.errors.push({
-        value: "invalid_format",
-        msg: "Invalid file type. Only PNG, JPG and JPEG files are allowed.",
-        param: "photo",
-        location: "file",
+        value: 'invalid_format',
+        msg: 'Invalid file type. Only PNG, JPG and JPEG files are allowed.',
+        param: 'photo',
+        location: 'file',
       });
     }
     if (!errors.isEmpty()) {
       try {
         const artists = await
-          Artist.find({}, "name formation_year").exec();
-     
+        Artist.find({}, 'name formation_year').exec();
 
         return res.render(
-          path.join(__dirname, "..", "views", "albums", "albumForm"),
+          path.join(__dirname, '..', 'views', 'albums', 'albumForm'),
           {
-            title: "Create an album",
+            title: 'Create an album',
             album: req.body,
             errors: errors.array(),
             artists,
-  
-            edit: true
-          }
+
+            edit: true,
+          },
         );
       } catch (err) {
         return next(err);
@@ -233,28 +230,27 @@ const postEditAlbum = [
           if (req.params.id.toString() !== checkAlbumExistence._id.toString()) {
             try {
               const artists = await
-                Artist.find({}, "name formation_year").exec();
-            
+              Artist.find({}, 'name formation_year').exec();
 
               return res.render(
                 path.join(
                   __dirname,
-                  "..",
-                  "views",
-                  "artists",
-                  "artistForm.ejs"
+                  '..',
+                  'views',
+                  'artists',
+                  'artistForm.ejs',
                 ),
                 {
-                  title: "Edit artist information",
+                  title: 'Edit artist information',
                   artist: req.body,
                   errors: [
                     {
-                      msg: "You cannot modify the information from an artist with information from another artist",
+                      msg: 'You cannot modify the information from an artist with information from another artist',
                     },
                   ],
                   artists,
 
-                }
+                },
               );
             } catch (err) {
               return next(err);
@@ -264,20 +260,18 @@ const postEditAlbum = [
             imgBase64 = checkAlbumExistence.photo;
           } else {
             const imgData = await fs.readFile(req.file.path);
-            imgBase64 = Buffer.from(imgData).toString("base64");
+            imgBase64 = Buffer.from(imgData).toString('base64');
+          }
+        } else if (!req.file) {
+          try {
+            const album = await Album.findById(req.params.id).exec();
+            imgBase64 = album.photo;
+          } catch (err) {
+            return next(err);
           }
         } else {
-          if (!req.file) {
-            try {
-              const album = await Album.findById(req.params.id).exec();
-              imgBase64 = album.photo;
-            } catch (err) {
-              return next(err);
-            }
-          } else {
-            const imgData = await fs.readFile(req.file.path);
-            imgBase64 = Buffer.from(imgData).toString("base64");
-          }
+          const imgData = await fs.readFile(req.file.path);
+          imgBase64 = Buffer.from(imgData).toString('base64');
         }
         const album = new Album({
           title: req.body.title,
@@ -289,7 +283,7 @@ const postEditAlbum = [
         const albumUpdated = await Album.findByIdAndUpdate(
           req.params.id,
           album,
-          { new: true }
+          { new: true },
         );
         return res.redirect(albumUpdated.url);
       } catch (err) {
@@ -300,40 +294,39 @@ const postEditAlbum = [
 ];
 
 const deleteAlbum = async (req, res, next) => {
-  
   try {
     const [albumDetail, songs] = await Promise.all([
       Album.findById(req.params.id)
-        .populate("artist")
+        .populate('artist')
         .exec(),
-      Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec()
-    ])
-    if (songs.length) { 
+      Song.find({ album: req.params.id }).sort({ track_number: 1 }).exec(),
+    ]);
+    if (songs.length) {
       try {
-        res.render(path.join(__dirname, "..", "views", "albums", "albumDetail.ejs"), {
+        res.render(path.join(__dirname, '..', 'views', 'albums', 'albumDetail.ejs'), {
           title: albumDetail.title,
           artist: albumDetail.artist,
           cover: albumDetail.cover,
           release_year: albumDetail.release_year,
           url: albumDetail.url,
-          error: "You cannot delete this album because is in use",
-          songs
+          error: 'You cannot delete this album because is in use',
+          songs,
         });
       } catch (err) {
-        return next(err); 
+        return next(err);
       }
     } else {
       try {
-        await Album.findByIdAndDelete(req.params.id); 
-        res.redirect('/albums'); 
+        await Album.findByIdAndDelete(req.params.id);
+        res.redirect('/albums');
       } catch (err) {
-        return next(err); 
+        return next(err);
       }
     }
   } catch (err) {
     return next(err);
   }
-}
+};
 
 module.exports = {
   getHome,
@@ -343,5 +336,5 @@ module.exports = {
   postCreateAlbum,
   getEditAlbum,
   postEditAlbum,
-  deleteAlbum
+  deleteAlbum,
 };
